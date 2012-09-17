@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="MyTestApp">
+</Property><Property Name="Solution File" Value="P:\GraphSharp\MyTestApp\MyTestApp.sln">
+</Property><Property Name="Date" Value="Freitag, 14. September 2012">
+</Property><Property Name="Time" Value="13:49">
+</Property></Properties><Event ErrorLevel="0" Project="MyTestApp" Source="MyTestApp.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="MyTestApp" Source="MyTestApp.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="MyTestApp.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="MyTestApp.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="MyTestApp" Source="MyTestApp.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
