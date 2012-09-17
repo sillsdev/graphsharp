@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using QuickGraph;
 using QuickGraph.Algorithms.ShortestPath;
@@ -148,7 +147,7 @@ namespace GraphSharp
             {
                 //compute the distances from the 'source'
                 var spaDijkstra =
-                    new UndirectedDijkstraShortestPathAlgorithm<Vertex, Edge>( undirected, ( edge ) => weights[edge], ShortestDistanceRelaxer.Instance );
+                    new UndirectedDijkstraShortestPathAlgorithm<Vertex, Edge>(undirected, (edge) => weights[edge], QuickGraph.Algorithms.DistanceRelaxers.ShortestDistance);
                 spaDijkstra.Compute( source );
 
                 int j = 0;

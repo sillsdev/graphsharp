@@ -16,7 +16,6 @@
 	<dependencies>
 	  <dependency id="QuickGraph" version="[3.3.51106.0]" />
 	  <dependency id="WPFExtensions"  />
-	  <dependency id="WPFToolkit"  />
 	</dependencies>
   </metadata>
   <files>
