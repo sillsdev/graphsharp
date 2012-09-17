@@ -1,0 +1,1 @@
+@..\Source\.nuget\NuGet.exe pack "..\Source\Graph#.Controls\GraphSharp.Controls.csproj"
