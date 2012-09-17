@@ -1,3 +1,10 @@
 bin
 obj
 *.nupkg
+
+# Only commit repositories.config. The rest of /packages is only a local cache
+!/Source/packages/repositories.config
+/Source/packages/*
+
+!/Tutorials/MyTestApp/packages/repositories.config
+/Tutorials/MyTestApp/packages/*
