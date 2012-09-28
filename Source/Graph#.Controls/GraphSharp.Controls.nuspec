@@ -10,12 +10,12 @@
     <projectUrl>http://graphsharp.codeplex.com/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Graph# is a graph layout framework. It contains some layout algorithms and a GraphLayout control for WPF applications.</description>
-    <releaseNotes>Initial nuget package. WE ARE NOT THE MAINTAINER OF GRAPH SHARP!</releaseNotes>
+    <releaseNotes>Added strong name. WE ARE NOT THE MAINTAINER OF GRAPH SHARP!</releaseNotes>
     <copyright>Copyright 2012</copyright>
     <tags>WPF QuickGraph</tags>
 	<dependencies>
-	  <dependency id="QuickGraph" version="[3.3.51106.0]" />
-	  <dependency id="WPFExtensions"  />
+      <dependency id="QuickGraph" version="[3.3.51106.0]" />
+      <dependency id="WPFExtensions"  />
 	</dependencies>
   </metadata>
   <files>
