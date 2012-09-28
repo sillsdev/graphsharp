@@ -138,6 +138,8 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="Foreground"
+                Value="Black" />
     </Style>
 
 </ResourceDictionary>

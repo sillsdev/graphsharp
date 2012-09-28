@@ -8,3 +8,5 @@ obj
 
 !/Tutorials/MyTestApp/packages/repositories.config
 /Tutorials/MyTestApp/packages/*
+
+/Source/GraphSharp.suo

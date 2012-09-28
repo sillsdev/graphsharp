@@ -4,6 +4,7 @@
     xmlns:graphsharp="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
     xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"        
     xmlns:myapp="clr-namespace:MyTestApp"
+    WindowState="Maximized"
     Title="Window1" Height="300" Width="300">
     <Window.Resources>
         <ResourceDictionary>
@@ -25,12 +26,12 @@
         <!-- <zoom:ZoomControl Mode="Original" Zoom="1" >-->
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
             <myapp:UMLGraphLayout x:Name="graphLayout"
-                                    Graph="{Binding GraphToVisualize}"
-                                    LayoutAlgorithmType="{Binding ElementName=cbLayoutAlgorithmType, Path=SelectedValue.Content}"
-                                    OverlapRemovalAlgorithmType="FSA"
-                                    OverlapRemovalConstraint="Must"
-                                    HighlightAlgorithmType="Simple"
-                                    EdgeRoutingAlgorithmType="">
+                                  Graph="{Binding GraphToVisualize}"
+                                  LayoutAlgorithmType="{Binding ElementName=cbLayoutAlgorithmType, Path=SelectedValue.Content}"
+                                  OverlapRemovalAlgorithmType="FSA"
+                                  OverlapRemovalConstraint="Must"
+                                  HighlightAlgorithmType="Simple"
+                                  EdgeRoutingAlgorithmType="">
             </myapp:UMLGraphLayout>
                 </ScrollViewer>
         <!--</zoom:ZoomControl>-->
