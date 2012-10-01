@@ -393,7 +393,6 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="icons\Desktop.ini" />
     <None Include="packages.config" />
     <None Include="PoC_TemporaryKey.pfx" />

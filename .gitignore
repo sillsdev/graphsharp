@@ -1,6 +1,8 @@
 bin
 obj
 *.nupkg
+*.suo
+*.csproj.user
 
 # Only commit repositories.config. The rest of /packages is only a local cache
 !/Source/packages/repositories.config
@@ -8,5 +10,3 @@ obj
 
 !/Tutorials/MyTestApp/packages/repositories.config
 /Tutorials/MyTestApp/packages/*
-
-/Source/GraphSharp.suo
