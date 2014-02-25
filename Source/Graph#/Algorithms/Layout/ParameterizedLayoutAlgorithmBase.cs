@@ -13,8 +13,8 @@ namespace GraphSharp.Algorithms.Layout
 		where TGraph : IVertexAndEdgeListGraph<TVertex, TEdge>
 		where TParam : class, ILayoutParameters
 	{
-		protected readonly IDictionary<TVertex, TVertexInfo> vertexInfos = new Dictionary<TVertex, TVertexInfo>();
-		protected readonly IDictionary<TEdge, TEdgeInfo> edgeInfos = new Dictionary<TEdge, TEdgeInfo>();
+		private readonly IDictionary<TVertex, TVertexInfo> _vertexInfos = new Dictionary<TVertex, TVertexInfo>();
+		private readonly IDictionary<TEdge, TEdgeInfo> _edgeInfos = new Dictionary<TEdge, TEdgeInfo>();
 
 		protected ParameterizedLayoutAlgorithmBase( TGraph visitedGraph )
 			: base( visitedGraph, null, null ) { }
@@ -29,20 +29,18 @@ namespace GraphSharp.Algorithms.Layout
 
 		public IDictionary<TVertex, TVertexInfo> VertexInfos
 		{
-			get { return vertexInfos; }
+			get { return _vertexInfos; }
 		}
 
 		public IDictionary<TEdge, TEdgeInfo> EdgeInfos
 		{
-			get { return edgeInfos; }
+			get { return _edgeInfos; }
 		}
 
 		protected override ILayoutIterationEventArgs<TVertex> CreateLayoutIterationEventArgs( int iteration, double statusInPercent, string message, IDictionary<TVertex, Point> vertexPositions )
 		{
-			return new LayoutIterationEventArgs<TVertex, TEdge, TVertexInfo, TEdgeInfo>( iteration, statusInPercent, message, vertexPositions, vertexInfos, edgeInfos );
+			return new LayoutIterationEventArgs<TVertex, TEdge, TVertexInfo, TEdgeInfo>( iteration, statusInPercent, message, vertexPositions, _vertexInfos, _edgeInfos );
 		}
-
-		public new event LayoutIterationEndedEventHandler<TVertex, TEdge, TVertexInfo, TEdgeInfo> IterationEnded;
 
 		public override object GetVertexInfo( TVertex vertex )
 		{
@@ -62,7 +60,7 @@ namespace GraphSharp.Algorithms.Layout
 			return null;
 		}
 
-		#endregion
+	    #endregion
 	}
 
     /// <summary>

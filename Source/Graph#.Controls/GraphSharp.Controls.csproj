@@ -96,11 +96,9 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WPFExtensions">
-      <HintPath>..\packages\WPFExtensions.1.0.0\lib\WPFExtensions.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Controls\AnimationContext.cs" />
     <Compile Include="Controls\CompoundVertexControl.cs" />
     <Compile Include="Controls\ContextualGraphLayout.cs" />

@@ -53,7 +53,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
             graph1.AddVertexRange( side1 );
             foreach ( var v in side1 )
             {
-                vertexInfos[v] = DoubleTreeVertexType.Backward;
+                VertexInfos[v] = DoubleTreeVertexType.Backward;
                 foreach ( var e in VisitedGraph.InEdges( v ) )
                 {
                     if ( !side1.Contains( e.Source ) || e.Source.Equals( e.Target ) )
@@ -71,7 +71,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
             graph2.AddVertexRange( side2 );
             foreach ( var v in side2 )
             {
-                vertexInfos[v] = DoubleTreeVertexType.Forward;
+                VertexInfos[v] = DoubleTreeVertexType.Forward;
                 foreach ( var e in VisitedGraph.OutEdges( v ) )
                 {
                     if ( !side2.Contains( e.Target ) || e.Source.Equals( e.Target ) )
@@ -82,7 +82,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
                 }
             }
 
-            vertexInfos[root] = DoubleTreeVertexType.Center;
+            VertexInfos[root] = DoubleTreeVertexType.Center;
             #endregion
 
             LayoutDirection side2Direction = Parameters.Direction;

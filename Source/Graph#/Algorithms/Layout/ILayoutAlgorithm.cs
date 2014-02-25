@@ -5,13 +5,8 @@ using System.Windows;
 
 namespace GraphSharp.Algorithms.Layout
 {
-	public delegate void LayoutIterationEndedEventHandler<TVertex, TEdge>( object sender, ILayoutIterationEventArgs<TVertex> e )
-		where TVertex : class
-		where TEdge : IEdge<TVertex>;
-
-	public delegate void LayoutIterationEndedEventHandler<TVertex, TEdge, TVertexInfo, TEdgeInfo>( object sender, ILayoutInfoIterationEventArgs<TVertex, TEdge, TVertexInfo, TEdgeInfo> e )
-		where TVertex : class
-		where TEdge : IEdge<TVertex>;
+	public delegate void LayoutIterationEndedEventHandler<TVertex>( object sender, ILayoutIterationEventArgs<TVertex> e )
+		where TVertex : class;
 
     /// <summary>
     /// Reports the progress of the layout.
@@ -34,8 +29,6 @@ namespace GraphSharp.Algorithms.Layout
 		/// Extra informations, calculated by the layout
 		/// </summary>
 		IDictionary<TEdge, TEdgeInfo> EdgeInfos { get; }
-
-		new event LayoutIterationEndedEventHandler<TVertex, TEdge, TVertexInfo, TEdgeInfo> IterationEnded;
 	}
 
 	public interface ILayoutAlgorithm<TVertex, TEdge, TGraph> : IAlgorithm<TGraph>
@@ -55,7 +48,7 @@ namespace GraphSharp.Algorithms.Layout
 		/// </summary>
 		object GetEdgeInfo( TEdge edge );
 
-		event LayoutIterationEndedEventHandler<TVertex, TEdge> IterationEnded;
+		event LayoutIterationEndedEventHandler<TVertex> IterationEnded;
 
 	    event ProgressChangedEventHandler ProgressChanged;
 	}

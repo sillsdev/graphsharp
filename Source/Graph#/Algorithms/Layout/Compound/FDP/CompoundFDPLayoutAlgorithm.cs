@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using QuickGraph;
-using System.Diagnostics.Contracts;
-using System.Diagnostics;
 
 namespace GraphSharp.Algorithms.Layout.Compound.FDP
 {
@@ -25,10 +23,9 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
             Contract.Invariant(_treeGrowingStep > 0);
         }*/
 
-        private double _temperature = 0;
-        private double _temperatureDelta; //need to be initialized
-        private readonly double _temperatureLambda = 0.99;
-        private readonly Random rnd = new Random(DateTime.Now.Millisecond);
+        private double _temperature;
+        private const double TemperatureLambda = 0.99;
+        private readonly Random _rnd = new Random(DateTime.Now.Millisecond);
 
         /// <summary>
         /// <para>Phase of the layout process.</para>
@@ -138,7 +135,7 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
                     if (_phase == 2 && !_allTreesGrown && _step % _treeGrowingStep == 0)
                         GrowTreesOneLevel();
 
-                    _temperature *= _temperatureLambda;
+                    _temperature *= TemperatureLambda;
                     _temperature = Math.Max(_temperature, minimalTemperature);
                 }
                 if (!_gravityCenterCalculated)
@@ -211,7 +208,7 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
             var positionVector = (uPos - vPos);
             if (positionVector.Length == 0)
             {
-                var compensationVector = new Vector(rnd.NextDouble(), rnd.NextDouble());
+                var compensationVector = new Vector(_rnd.NextDouble(), _rnd.NextDouble());
                 positionVector = compensationVector * 2;
                 uPos += compensationVector;
                 vPos -= compensationVector;
@@ -245,7 +242,7 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
             var positionVector = (uPos - vPos);
             if (positionVector.Length == 0)
             {
-                var compensationVector = new Vector(rnd.NextDouble(), rnd.NextDouble());
+                var compensationVector = new Vector(_rnd.NextDouble(), _rnd.NextDouble());
                 positionVector = compensationVector * 2;
                 uPos += compensationVector;
                 vPos -= compensationVector;
@@ -383,7 +380,7 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
                 foreach (var uVertex in _levels[i])
                 {
                     var u = _vertexDatas[uVertex];
-                    var force = u.ApplyForce(_temperature * Math.Max(1, _step) / 100.0 * Parameters.DisplacementLimitMultiplier);
+                    u.ApplyForce(_temperature * Math.Max(1, _step) / 100.0 * Parameters.DisplacementLimitMultiplier);
                 }
             }
         }

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using GraphSharp.Algorithms.EdgeRouting;
 using QuickGraph;
 using QuickGraph.Algorithms.Search;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Diagnostics.Contracts;
 
 namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
 {
@@ -21,12 +19,11 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
 
         readonly Func<TEdge, EdgeTypes> _edgePredicate;
         readonly VertexLayerCollection _layers = new VertexLayerCollection();
-        private int _iteration;
         double _statusInPercent;
 
-        private const int percentOfPreparation = 5;
-        private const int percentOfSugiyama = 60;
-        private const int percentOfIncrementalExtension = 30;
+        private const int PercentOfPreparation = 5;
+        private const int PercentOfSugiyama = 60;
+        private const int PercentOfIncrementalExtension = 30;
 
         private const string ParallelEdgesTag = "ParallelEdges";
         /*
@@ -534,7 +531,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
                     changed = true;
                 }
 
-                _statusInPercent += percentOfSugiyama / maxIterations;
+                _statusInPercent += PercentOfSugiyama / maxIterations;
             }
 
             #region Mark the neighbour vertices connected with associative edges
@@ -861,7 +858,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
             //Phase 1 - Filters & Removals
             //
             FiltersAndRemovals();
-            _statusInPercent = percentOfPreparation;
+            _statusInPercent = PercentOfPreparation;
 
             //
             //Phase 2 - Layer assignment
@@ -873,7 +870,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
             //
             PrepareForSugiyama();
             SugiyamaLayout();
-            _statusInPercent = percentOfPreparation + percentOfSugiyama;
+            _statusInPercent = PercentOfPreparation + PercentOfSugiyama;
 
             //
             //Phase 4 - Horizontal position assignment
@@ -883,13 +880,13 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
 
             //Phase 5 - Incremental extension, add vertices connected with only general edges
             //IncrementalExtensionImproved();
-            _statusInPercent = percentOfPreparation + percentOfSugiyama + percentOfIncrementalExtension;
+            _statusInPercent = PercentOfPreparation + PercentOfSugiyama + PercentOfIncrementalExtension;
             _statusInPercent = 100;
         }
 
         protected void OnIterationEnded( string message )
         {
-            OnIterationEnded( _iteration, _statusInPercent, message, true );
+            OnIterationEnded(0, _statusInPercent, message, true);
         }
     }
 }

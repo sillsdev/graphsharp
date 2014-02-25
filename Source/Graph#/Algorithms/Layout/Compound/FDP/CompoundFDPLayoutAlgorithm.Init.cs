@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows;
 using QuickGraph;
 using System;
-using System.Diagnostics.Contracts;
 
 namespace GraphSharp.Algorithms.Layout.Compound.FDP
 {
@@ -95,10 +94,10 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
                     //the vertex is a leaf tree node
                     removed = true;
                     while (_removedRootTreeNodeLevels.Count <= i)
-                        _removedRootTreeNodeLevels.Push(new List<RemovedTreeNodeData<TVertex,TEdge>>());
+                        _removedRootTreeNodeLevels.Push(new List<RemovedTreeNodeData>());
 
                     //add to the removed vertices
-                    _removedRootTreeNodeLevels.Peek().Add(new RemovedTreeNodeData<TVertex,TEdge>(vertex, edge));
+                    _removedRootTreeNodeLevels.Peek().Add(new RemovedTreeNodeData(vertex, edge));
                     _removedRootTreeNodes.Add(vertex);
                     _removedRootTreeEdges.Add(edge);
                 }
@@ -169,7 +168,7 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
                 VertexPositions.TryGetValue(vertex, out position);
 
                 //create the information container for this simple vertex
-                var dataContainer = new SimpleVertexData(vertex, _rootCompoundVertex, false, position, vertexSize);
+                var dataContainer = new SimpleVertexData(_rootCompoundVertex, false, position, vertexSize);
                 dataContainer.Parent = _rootCompoundVertex;
                 _simpleVertexDatas[vertex] = dataContainer;
                 _vertexDatas[vertex] = dataContainer;
@@ -216,7 +215,7 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
                     VertexPositions.TryGetValue(vertex, out position);
 
                     //create the information container for this compound vertex
-                    var dataContainer = new CompoundVertexData(vertex, _rootCompoundVertex, false, position, vertexSize, border, layoutType);
+                    var dataContainer = new CompoundVertexData(_rootCompoundVertex, false, position, vertexSize, border, layoutType);
                     if (i == 0)
                     {
                         dataContainer.Parent = _rootCompoundVertex;

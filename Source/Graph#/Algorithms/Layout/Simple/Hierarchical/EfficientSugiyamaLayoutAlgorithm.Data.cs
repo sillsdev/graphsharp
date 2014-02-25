@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics.Contracts;
-using QuickGraph;
+﻿using QuickGraph;
 using System.Diagnostics;
 using System.Windows;
 
@@ -22,7 +17,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
             /// <summary>
             /// Gets the original edge of this SugiEdge.
             /// </summary>
-            public TEdge OriginalEdge { get { return this.Tag; } }
+            public TEdge OriginalEdge { get { return Tag; } }
 
             /// <summary>
             /// Gets or sets that the edge is included in a 
@@ -42,8 +37,6 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
                 Marked = TempMark;
             }
         }
-
-
 
         protected enum VertexTypes
         {
@@ -70,41 +63,28 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
 
             /* Used by horizontal assignment */
             public readonly Data[] Sinks = new Data[4];
-            public readonly double[] Shifts = new double[4] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity };
-        }
-
-        protected abstract class SugiVertex<TVertex> : Data
-        {
-            public TVertex OriginalVertex;
-            public VertexTypes Type;
-            public Segment Segment;
-            public int LayerIndex { get; set; }
-            public double MeasuredPosition { get; set; }
-
-            public SugiVertex() { }
-
-            public SugiVertex(TVertex originalVertex)
-            {
-                OriginalVertex = originalVertex;
-                Type = VertexTypes.Original;
-                Segment = null;
-            }
+            public readonly double[] Shifts = new[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity };
         }
 
         [DebuggerDisplay("{Type}: {OriginalVertex} - {Position} ; {MeasuredPosition} on layer {LayerIndex}")]
-        protected class SugiVertex : SugiVertex<TVertex>
+        protected class SugiVertex : Data
         {
-            public readonly double[] HorizontalPositions = new double[4] { double.NaN, double.NaN, double.NaN, double.NaN };
+            public readonly double[] HorizontalPositions = new[] { double.NaN, double.NaN, double.NaN, double.NaN };
             public double HorizontalPosition = double.NaN;
             public double VerticalPosition = double.NaN;
             public readonly SugiVertex[] Roots = new SugiVertex[4];
             public readonly SugiVertex[] Aligns = new SugiVertex[4];
-            public readonly double[] BlockWidths = new double[4] { double.NaN, double.NaN, double.NaN, double.NaN };
+            public readonly double[] BlockWidths = new[] { double.NaN, double.NaN, double.NaN, double.NaN };
             public int IndexInsideLayer;
             public int PermutationIndex;
             public int TempPosition;
             public bool DoNotOpt;
             public readonly Size Size;
+            public TVertex OriginalVertex;
+            public VertexTypes Type;
+            public Segment Segment;
+            public int LayerIndex { get; set; }
+            public double MeasuredPosition { get; set; }
 
             public SugiVertex()
             {
@@ -112,9 +92,11 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
             }
 
             public SugiVertex(TVertex originalVertex, Size size)
-                : base(originalVertex)
             {
                 Size = size;
+                OriginalVertex = originalVertex;
+                Type = VertexTypes.Original;
+                Segment = null;
             }
 
             public void SavePositionToTemp()

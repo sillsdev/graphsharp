@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using QuickGraph;
 using System.Windows;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 
 namespace GraphSharp.Algorithms.Layout
 {
@@ -11,8 +9,8 @@ namespace GraphSharp.Algorithms.Layout
 		where TEdge : IEdge<TVertex>
 		where TGraph : IVertexAndEdgeListGraph<TVertex, TEdge>
 	{
-		protected readonly IDictionary<TVertex, TVertexInfo> vertexInfos = new Dictionary<TVertex, TVertexInfo>();
-		protected readonly IDictionary<TEdge, TEdgeInfo> edgeInfos = new Dictionary<TEdge, TEdgeInfo>();
+		private readonly IDictionary<TVertex, TVertexInfo> _vertexInfos = new Dictionary<TVertex, TVertexInfo>();
+		private readonly IDictionary<TEdge, TEdgeInfo> _edgeInfos = new Dictionary<TEdge, TEdgeInfo>();
 
 		protected LayoutAlgorithmBase( TGraph visitedGraph )
 			: base( visitedGraph )
@@ -26,15 +24,13 @@ namespace GraphSharp.Algorithms.Layout
 
 		public IDictionary<TVertex, TVertexInfo> VertexInfos
 		{
-			get { return vertexInfos; }
+			get { return _vertexInfos; }
 		}
 
 		public IDictionary<TEdge, TEdgeInfo> EdgeInfos
 		{
-			get { return edgeInfos; }
+			get { return _edgeInfos; }
 		}
-
-		public new event LayoutIterationEndedEventHandler<TVertex, TEdge, TVertexInfo, TEdgeInfo> IterationEnded;
 
 		public override object GetVertexInfo( TVertex vertex )
 		{
@@ -73,7 +69,7 @@ namespace GraphSharp.Algorithms.Layout
 			get { return visitedGraph; }
 		}
 
-		public event LayoutIterationEndedEventHandler<TVertex, TEdge> IterationEnded;
+		public event LayoutIterationEndedEventHandler<TVertex> IterationEnded;
 
 	    public event ProgressChangedEventHandler ProgressChanged;
 
