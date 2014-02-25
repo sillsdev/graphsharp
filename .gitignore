@@ -10,3 +10,4 @@ obj
 
 !/Tutorials/MyTestApp/packages/repositories.config
 /Tutorials/MyTestApp/packages/*
+*.user
