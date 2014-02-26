@@ -33,6 +33,8 @@ namespace GraphSharp.Controls
         public static readonly DependencyProperty StrokeThicknessProperty = Shape.StrokeThicknessProperty.AddOwner( typeof(EdgeControl),
                                                                                                                     new UIPropertyMetadata(2.0) );
 
+		public static readonly DependencyProperty IsDirectedProperty = DependencyProperty.Register("IsDirected", typeof (bool),
+			typeof (EdgeControl), new PropertyMetadata(true));
 		#endregion
 
 		#region Properties
@@ -65,6 +67,12 @@ namespace GraphSharp.Controls
             get { return (double)GetValue(StrokeThicknessProperty); }
             set { SetValue(StrokeThicknessProperty, value); }
         }
+
+		public bool IsDirected
+		{
+			get { return (bool) GetValue(IsDirectedProperty); }
+			set { SetValue(IsDirectedProperty, value); }
+		}
         #endregion
         
 		static EdgeControl()

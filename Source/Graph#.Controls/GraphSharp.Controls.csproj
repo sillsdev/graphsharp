@@ -128,12 +128,7 @@
     <Compile Include="Converters\CoordinatesToPointConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Converters\EdgeRouteToPathConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Converters\GraphConverterHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Converters\EdgeRouteToPathConverter.cs" />
     <Compile Include="Converters\PointArrayToString.cs">
       <SubType>Code</SubType>
     </Compile>

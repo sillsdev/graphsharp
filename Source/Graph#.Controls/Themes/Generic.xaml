@@ -39,6 +39,8 @@
                                                  Path="Target.ActualHeight" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
                                                  Path="RoutePoints" />
+										<Binding RelativeSource="{RelativeSource TemplatedParent}"
+												 Path="IsDirected" />
                                     </MultiBinding>
                                 </PathGeometry.Figures>
                             </PathGeometry>
