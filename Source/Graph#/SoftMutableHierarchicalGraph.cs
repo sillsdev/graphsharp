@@ -5,7 +5,7 @@ using QuickGraph;
 namespace GraphSharp
 {
 	public class SoftMutableHierarchicalGraph<TVertex, TEdge> : HierarchicalGraph<TVertex, TEdge>, ISoftMutableGraph<TVertex, TEdge>
-		where TEdge : TypedEdge<TVertex>
+		where TEdge : ITypedEdge<TVertex>
 	{
 		private GraphHideHelper<TVertex, TEdge> hideHelper;
 

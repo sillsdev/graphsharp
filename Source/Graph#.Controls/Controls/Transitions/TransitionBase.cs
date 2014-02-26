@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GraphSharp.Controls
+namespace GraphSharp.Controls.Transitions
 {
     public abstract class TransitionBase : ITransition
     {

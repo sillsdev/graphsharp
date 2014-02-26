@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using GraphSharp.Algorithms.Layout.Contextual;
+using GraphSharp.Algorithms.Layout.Simple.Grid;
 using QuickGraph;
 using GraphSharp.Algorithms.Layout.Simple.Tree;
 using GraphSharp.Algorithms.Layout.Simple.Circular;
@@ -18,7 +21,7 @@ namespace GraphSharp.Algorithms.Layout
     {
         public IEnumerable<string> AlgorithmTypes
         {
-            get { return new[] { "Circular", "Tree", "FR", "BoundedFR", "KK", "ISOM", "LinLog", "EfficientSugiyama", /*"Sugiyama",*/ "CompoundFDP" }; }
+            get { return new[] { "Circular", "Tree", "FR", "BoundedFR", "KK", "ISOM", "LinLog", "EfficientSugiyama", /*"Sugiyama",*/ "CompoundFDP", "StressMajorization", "RadialTree", "Grid" }; }
         }
 
         public ILayoutAlgorithm<TVertex, TEdge, TGraph> CreateAlgorithm(string newAlgorithmType, ILayoutContext<TVertex, TEdge, TGraph> context, ILayoutParameters parameters)
@@ -64,8 +67,8 @@ namespace GraphSharp.Algorithms.Layout
                                                                                    context.Positions,
                                                                                    parameters as
                                                                                    SugiyamaLayoutParameters,
-                                                                                   e => (e is TypedEdge<TVertex>
-                                                                                        ? (e as TypedEdge<TVertex>).Type
+                                                                                   e => (e is ITypedEdge<TVertex>
+                                                                                        ? (e as ITypedEdge<TVertex>).Type
                                                                                         : EdgeTypes.Hierarchical));
                     case "CompoundFDP":
                         return new CompoundFDPLayoutAlgorithm<TVertex, TEdge, TGraph>(
@@ -75,13 +78,24 @@ namespace GraphSharp.Algorithms.Layout
                             new Dictionary<TVertex, CompoundVertexInnerLayoutType>(),
                             context.Positions,
                             parameters as CompoundFDPLayoutParameters);
+
+					case "StressMajorization":
+						return new StressMajorizationLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, parameters as StressMajorizationLayoutParameters);
+
+					case "RadialTree":
+						return new RadialTreeLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, context.Sizes, parameters as RadialTreeLayoutParameters);
+
+					case "Grid":
+						return new GridLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, context.Sizes, parameters as GridLayoutParameters);
+
                     default:
                         return null;
                 }
             }
-            else if (context.Mode == LayoutMode.Compound)
+
+            if (context.Mode == LayoutMode.Compound)
             {
-                var compoundContext = context as ICompoundLayoutContext<TVertex, TEdge, TGraph>;
+                var compoundContext = (ICompoundLayoutContext<TVertex, TEdge, TGraph>) context;
                 switch (newAlgorithmType)
                 {
                     case "CompoundFDP":
@@ -123,6 +137,12 @@ namespace GraphSharp.Algorithms.Layout
                     return oldParameters.CreateNewParameter<SugiyamaLayoutParameters>();
                 case "CompoundFDP":
                     return oldParameters.CreateNewParameter<CompoundFDPLayoutParameters>();
+				case "StressMajorization":
+					return oldParameters.CreateNewParameter<StressMajorizationLayoutParameters>();
+				case "RadialTree":
+					return oldParameters.CreateNewParameter<RadialTreeLayoutParameters>();
+				case "Grid":
+					return oldParameters.CreateNewParameter<GridLayoutParameters>();
                 default:
                     return null;
             }
@@ -140,7 +160,7 @@ namespace GraphSharp.Algorithms.Layout
             if (algorithm == null)
                 return string.Empty;
 
-            int index = algorithm.GetType().Name.IndexOf("LayoutAlgorithm");
+            int index = algorithm.GetType().Name.IndexOf("LayoutAlgorithm", StringComparison.Ordinal);
             if (index == -1)
                 return string.Empty;
 
@@ -150,16 +170,30 @@ namespace GraphSharp.Algorithms.Layout
 
         public bool NeedEdgeRouting(string algorithmType)
         {
-            return (algorithmType != "Sugiyama") && (algorithmType != "EfficientSugiyama");
+            switch (algorithmType)
+            {
+                case "Tree":
+                case "Grid":
+                    return true;
+            }
+
+            return false;
         }
 
         public bool NeedOverlapRemoval(string algorithmType)
         {
-            return (algorithmType != "Sugiyama"
-                && algorithmType != "EfficientSugiyama"
-                && algorithmType != "Circular" 
-                && algorithmType != "Tree" 
-                && algorithmType != "CompoundFDP");
+            switch (algorithmType)
+            {
+                case "FR":
+                case "BoundedFR":
+                case "KK":
+                case "ISOM":
+                case "LinLog":
+                case "StressMajorization":
+                    return true;
+            }
+
+            return false;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
         where TEdge : IEdge<TVertex> 
         where TGraph : IVertexAndEdgeListGraph<TVertex, TEdge>
 	{
-		private class SugiEdge : TypedEdge<SugiVertex>
+		private class SugiEdge : Edge<SugiVertex>, ITypedEdge<SugiVertex>
 		{
 			public bool IsLongEdge
 			{
@@ -24,6 +24,8 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
 
 			public IList<SugiVertex> DummyVertices { get; private set; }
 			public TEdge Original { get; private set; }
+		    public EdgeTypes Type { get; private set; }
+
 			public bool IsReverted
 			{
 				get
@@ -33,10 +35,16 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
 			}
 
 			public SugiEdge( TEdge original, SugiVertex source, SugiVertex target, EdgeTypes type )
-				: base( source, target, type )
+				: base( source, target)
 			{
 				Original = original;
+			    Type = type;
 			}
+
+		    public override string ToString()
+		    {
+			    return string.Format("{0}: {1}-->{2}", Type, this.Source, this.Target);
+		    }
 		}
 	}
 }

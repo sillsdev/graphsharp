@@ -4,7 +4,7 @@ using QuickGraph;
 namespace GraphSharp
 {
 	public interface IHierarchicalBidirectionalGraph<TVertex, TEdge> : IBidirectionalGraph<TVertex, TEdge>
-		where TEdge : TypedEdge<TVertex>
+		where TEdge : ITypedEdge<TVertex>
 	{
 		IEnumerable<TEdge> HierarchicalEdgesFor(TVertex v);
 		int HierarchicalEdgeCountFor(TVertex v);

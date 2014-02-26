@@ -12,7 +12,7 @@
     <AssemblyName>GraphSharp</AssemblyName>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -110,6 +110,9 @@
     <AssemblyOriginatorKeyFile>GraphSharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\..\..\..\packages\MathNet.Numerics.2.6.2\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -120,12 +123,21 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Numerics" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithms\AlgorithmBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Algorithms\EdgeRouting\BundleEdgeRoutingAlgorithm.cs" />
+    <Compile Include="Algorithms\EdgeRouting\BundleEdgeRoutingParameters.cs" />
+    <Compile Include="Algorithms\EdgeRouting\Obstacle.cs" />
+    <Compile Include="Algorithms\EdgeRouting\ObstacleSegment.cs" />
+    <Compile Include="Algorithms\EdgeRouting\Point2D.cs" />
+    <Compile Include="Algorithms\EdgeRouting\RotationTreeNode.cs" />
+    <Compile Include="Algorithms\EdgeRouting\VisibilityGraph.cs" />
+    <Compile Include="Algorithms\Highlight\HierarchicalHighlightAlgorithm.cs" />
     <Compile Include="Algorithms\Highlight\HighlightAlgorithmBase.cs" />
     <Compile Include="Algorithms\Highlight\HighlightContext.cs" />
     <Compile Include="Algorithms\Highlight\HighlightParameterBase.cs" />
@@ -136,6 +148,8 @@
     <Compile Include="Algorithms\Highlight\IHighlightParameters.cs" />
     <Compile Include="Algorithms\Highlight\SimpleHighlightAlgorithm.cs" />
     <Compile Include="Algorithms\Highlight\StandardHighlightAlgorithmFactory.cs" />
+    <Compile Include="Algorithms\Highlight\UndirectedHighlightAlgorithm.cs" />
+    <Compile Include="Algorithms\Highlight\UndirectedHighlightParameters.cs" />
     <Compile Include="Algorithms\IAlgorithm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -145,6 +159,12 @@
     <Compile Include="Algorithms\LayeredTopologicalSortAlgorithm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Algorithms\Layout\Contextual\RadialTreeLayoutAlgorithm.cs" />
+    <Compile Include="Algorithms\Layout\Contextual\RadialTreeLayoutParameters.cs" />
+    <Compile Include="Algorithms\Layout\Simple\FDP\StressMajorizationLayoutAlgorithm.cs" />
+    <Compile Include="Algorithms\Layout\Simple\FDP\StressMajorizationLayoutParameters.cs" />
+    <Compile Include="Algorithms\Layout\Simple\Grid\GridLayoutAlgorithm.cs" />
+    <Compile Include="Algorithms\Layout\Simple\Grid\GridLayoutParameters.cs" />
     <Compile Include="Algorithms\Layout\Simple\Tree\BalloonTreeLayoutAlgorithm.cs" />
     <Compile Include="Algorithms\Layout\Simple\Tree\BalloonTreeLayoutParameters.cs" />
     <Compile Include="Algorithms\Layout\Simple\Circular\CircularLayoutAlgorithm.cs">
@@ -232,7 +252,6 @@
     <Compile Include="Algorithms\Layout\Simple\FDP\LinLogLayoutAlgorithm.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Algorithms\Layout\Contextual\RadialTreeLayoutAlgorithm.cs" />
     <Compile Include="Algorithms\Layout\StandardLayoutAlgorithmFactory.cs" />
     <Compile Include="Algorithms\OverlapRemoval\FSAAlgorithm.cs">
       <SubType>Code</SubType>
@@ -297,22 +316,23 @@
     <Compile Include="HierarchicalGraph.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IAngledVertex.cs" />
     <Compile Include="ICompoundGraph.cs" />
+    <Compile Include="IGridVertex.cs" />
     <Compile Include="IHierarchicalBidirectionalGraph.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ILengthEdge.cs" />
     <Compile Include="ISoftMutableGraph.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IWeightedEdge.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SoftMutableBidirectionalGraph.cs" />
     <Compile Include="SoftMutableHierarchicalGraph.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TypedEdge.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WeightedEdge.cs">
+    <Compile Include="ITypedEdge.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WrappedVertex.cs">
@@ -361,9 +381,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Algorithms\Layout\Contextual\IContextualLayoutAlgorithmFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Algorithms\Layout\Contextual\RadialTreeLayoutParameters.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Algorithms\Layout\Simple\Circular\CircularLayoutParameters.cs">
@@ -427,6 +444,7 @@
     <None Include="GraphSharp.snk" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

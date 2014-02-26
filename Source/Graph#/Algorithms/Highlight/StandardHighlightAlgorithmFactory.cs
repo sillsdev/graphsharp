@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QuickGraph;
 
@@ -9,16 +10,14 @@ namespace GraphSharp.Algorithms.Highlight
 		where TEdge : IEdge<TVertex>
 		where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
 	{
-		private static readonly string[] highlightModes = { "Simple" };
-
 		public IEnumerable<string> HighlightModes
 		{
-			get { return highlightModes; }
+			get { return new[] {"Simple", "Hierarchical", "Undirected"}; }
 		}
 
 		public bool IsValidMode( string mode )
 		{
-			return string.IsNullOrEmpty( mode ) || highlightModes.Contains( mode );
+			return string.IsNullOrEmpty( mode ) || HighlightModes.Contains( mode );
 		}
 
 		public IHighlightAlgorithm<TVertex, TEdge, TGraph> CreateAlgorithm(
@@ -31,6 +30,10 @@ namespace GraphSharp.Algorithms.Highlight
 			{
 				case "Simple":
 					return new SimpleHighlightAlgorithm<TVertex, TEdge, TGraph>(controller, parameters);
+				case "Hierarchical":
+					return new HierarchicalHighlightAlgorithm<TVertex, TEdge, TGraph>(controller, parameters);
+				case "Undirected":
+					return new UndirectedHighlightAlgorithm<TVertex, TEdge, TGraph>(controller, parameters as UndirectedHighlightParameters);
 				default:
 					return null;
 			}
@@ -42,6 +45,10 @@ namespace GraphSharp.Algorithms.Highlight
 			{
 				case "Simple":
 					return new HighlightParameterBase();
+				case "Hierarchical":
+					return new HighlightParameterBase();
+				case "Undirected":
+					return oldParameters.CreateNewParameter<UndirectedHighlightParameters>();
 				default:
 					return new HighlightParameterBase();
 			}
@@ -49,10 +56,15 @@ namespace GraphSharp.Algorithms.Highlight
 
 		public string GetHighlightMode( IHighlightAlgorithm<TVertex, TEdge, TGraph> algorithm )
 		{
-			if ( algorithm is SimpleHighlightAlgorithm<TVertex, TEdge, TGraph> )
-				return "Simple";
+            if (algorithm == null)
+                return string.Empty;
 
-			return null;
+            int index = algorithm.GetType().Name.IndexOf("HighlightAlgorithm", StringComparison.Ordinal);
+            if (index == -1)
+                return string.Empty;
+
+            string algoType = algorithm.GetType().Name;
+            return algoType.Substring(0, algoType.Length - index);
 		}
 	}
 }

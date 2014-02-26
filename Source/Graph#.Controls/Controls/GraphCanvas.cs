@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using GraphSharp.Controls.Animations;
-using System.Windows.Media;
+using GraphSharp.Controls.Transitions;
 
 namespace GraphSharp.Controls
 {

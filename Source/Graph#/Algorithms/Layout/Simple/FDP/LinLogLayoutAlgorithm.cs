@@ -340,7 +340,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
 				int attrIndex = 0;
 				foreach ( var e in VisitedGraph.InEdges( v.OriginalVertex ) )
 				{
-					double weight = e is WeightedEdge<TVertex> ? ( ( e as WeightedEdge<TVertex> ).Weight ) : 1;
+					double weight = e is IWeightedEdge<TVertex> ? ( ( e as IWeightedEdge<TVertex> ).Weight ) : 1;
 					v.Attractions[attrIndex] = new LinLogEdge
 					                           	{
 					                           		Target = vertexMap[e.Source],
@@ -354,7 +354,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
 
 				foreach ( var e in VisitedGraph.OutEdges( v.OriginalVertex ) )
 				{
-					double weight = e is WeightedEdge<TVertex> ? ( ( e as WeightedEdge<TVertex> ).Weight ) : 1;
+					double weight = e is IWeightedEdge<TVertex> ? ( ( e as IWeightedEdge<TVertex> ).Weight ) : 1;
 					v.Attractions[attrIndex] = new LinLogEdge
 					                           	{
 					                           		Target = vertexMap[e.Target],

@@ -6,7 +6,7 @@ namespace GraphSharp
 {
 	public class HierarchicalGraph<TVertex, TEdge> :
 		BidirectionalGraph<TVertex, TEdge>, IHierarchicalBidirectionalGraph<TVertex, TEdge>
-		where TEdge : TypedEdge<TVertex>
+		where TEdge : ITypedEdge<TVertex>
 	{
 		#region Properties, fields
 		private class TypedEdgeCollectionWrapper
