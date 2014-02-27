@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using QuickGraph;
 using System.Windows;
-using System.Diagnostics;
 using QuickGraph.Algorithms.Search;
 using QuickGraph.Collections;
 
 namespace GraphSharp.Algorithms.Layout.Simple.Tree
 {
-    public partial class SimpleTreeLayoutAlgorithm<TVertex, TEdge, TGraph> : DefaultParameterizedLayoutAlgorithmBase<TVertex, TEdge, TGraph, SimpleTreeLayoutParameters>
+    public partial class SimpleTreeLayoutAlgorithm<TVertex, TEdge, TGraph>
         where TVertex : class
         where TEdge : IEdge<TVertex>
         where TGraph : IBidirectionalGraph<TVertex, TEdge>

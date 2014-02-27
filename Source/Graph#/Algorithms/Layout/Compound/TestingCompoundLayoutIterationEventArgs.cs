@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows;
 using QuickGraph;
 
@@ -20,19 +17,20 @@ namespace GraphSharp.Algorithms.Layout.Compound
             int iteration, 
             double statusInPercent, 
             string message, 
-            IDictionary<TVertex, Point> vertexPositions, 
+            IDictionary<TVertex, Point> vertexPositions,
+            IDictionary<TVertex, double> vertexAngles,
             IDictionary<TVertex, Size> innerCanvasSizes,
             IDictionary<TVertex, TVertexInfo> vertexInfos,
             Point gravitationCenter) 
-            : base(iteration, statusInPercent, message, vertexPositions, innerCanvasSizes)
+            : base(iteration, statusInPercent, message, vertexPositions, vertexAngles, innerCanvasSizes)
         {
             this.vertexInfos = vertexInfos;
-            this.GravitationCenter = gravitationCenter;
+            GravitationCenter = gravitationCenter;
         }
 
         public override object GetVertexInfo(TVertex vertex)
         {
-            TVertexInfo info = default(TVertexInfo);
+            TVertexInfo info;
             if (vertexInfos.TryGetValue(vertex, out info))
                 return info;
 
@@ -41,7 +39,7 @@ namespace GraphSharp.Algorithms.Layout.Compound
 
         public IDictionary<TVertex, TVertexInfo> VertexInfos
         {
-            get { return this.vertexInfos; }
+            get { return vertexInfos; }
         }
 
         public IDictionary<TEdge, TEdgeInfo> EdgeInfos

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using QuickGraph;
 using QuickGraph.Algorithms.Search;
 
@@ -53,5 +51,5 @@ namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical
                 _graph.AddEdge(new SugiEdge(edge.OriginalEdge, edge.Target, edge.Source));
             }
         }
-	}
+    }
 }

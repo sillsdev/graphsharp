@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Windows;
 using QuickGraph;
 
@@ -17,7 +16,7 @@ namespace GraphSharp.Algorithms.Layout.Compound
             LayoutMode mode,
             IDictionary<TVertex, Thickness> vertexBorders,
             IDictionary<TVertex, CompoundVertexInnerLayoutType> layoutTypes)
-            : base( graph, positions, sizes, mode )
+            : base(graph, positions, sizes, mode)
         {
             VertexBorders = vertexBorders;
             LayoutTypes = layoutTypes;

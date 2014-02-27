@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GraphSharp.Algorithms.Layout.Contextual;
 using GraphSharp.Algorithms.Layout.Simple.Grid;
 using QuickGraph;
 using GraphSharp.Algorithms.Layout.Simple.Tree;
@@ -21,7 +20,7 @@ namespace GraphSharp.Algorithms.Layout
     {
         public IEnumerable<string> AlgorithmTypes
         {
-            get { return new[] { "Circular", "Tree", "FR", "BoundedFR", "KK", "ISOM", "LinLog", "EfficientSugiyama", /*"Sugiyama",*/ "CompoundFDP", "StressMajorization", "RadialTree", "Grid" }; }
+            get { return new[] { "Circular", "Tree", "FR", "BoundedFR", "KK", "ISOM", "LinLog", "EfficientSugiyama", /*"Sugiyama",*/ "CompoundFDP", "StressMajorization", "Grid" }; }
         }
 
         public ILayoutAlgorithm<TVertex, TEdge, TGraph> CreateAlgorithm(string newAlgorithmType, ILayoutContext<TVertex, TEdge, TGraph> context, ILayoutParameters parameters)
@@ -79,14 +78,11 @@ namespace GraphSharp.Algorithms.Layout
                             context.Positions,
                             parameters as CompoundFDPLayoutParameters);
 
-					case "StressMajorization":
-						return new StressMajorizationLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, parameters as StressMajorizationLayoutParameters);
+                    case "StressMajorization":
+                        return new StressMajorizationLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, parameters as StressMajorizationLayoutParameters);
 
-					case "RadialTree":
-						return new RadialTreeLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, context.Sizes, parameters as RadialTreeLayoutParameters);
-
-					case "Grid":
-						return new GridLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, context.Sizes, parameters as GridLayoutParameters);
+                    case "Grid":
+                        return new GridLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, context.Sizes, parameters as GridLayoutParameters);
 
                     default:
                         return null;
@@ -137,12 +133,10 @@ namespace GraphSharp.Algorithms.Layout
                     return oldParameters.CreateNewParameter<SugiyamaLayoutParameters>();
                 case "CompoundFDP":
                     return oldParameters.CreateNewParameter<CompoundFDPLayoutParameters>();
-				case "StressMajorization":
-					return oldParameters.CreateNewParameter<StressMajorizationLayoutParameters>();
-				case "RadialTree":
-					return oldParameters.CreateNewParameter<RadialTreeLayoutParameters>();
-				case "Grid":
-					return oldParameters.CreateNewParameter<GridLayoutParameters>();
+                case "StressMajorization":
+                    return oldParameters.CreateNewParameter<StressMajorizationLayoutParameters>();
+                case "Grid":
+                    return oldParameters.CreateNewParameter<GridLayoutParameters>();
                 default:
                     return null;
             }

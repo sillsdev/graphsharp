@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows;
 
 namespace GraphSharp.Algorithms.Layout
@@ -30,5 +27,7 @@ namespace GraphSharp.Algorithms.Layout
         string Message { get; }
 
         IDictionary<TVertex, Point> VertexPositions { get; }
+
+        IDictionary<TVertex, double> VertexAngles { get; } 
     }
 }

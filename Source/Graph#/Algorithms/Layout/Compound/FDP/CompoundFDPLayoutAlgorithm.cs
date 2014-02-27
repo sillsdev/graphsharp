@@ -176,6 +176,7 @@ namespace GraphSharp.Algorithms.Layout.Compound.FDP
                 new TestingCompoundLayoutIterationEventArgs<TVertex, TEdge, TestingCompoundVertexInfo, object>(
                     0, 0, string.Format("Phase: {0}, Steps: {1}", _phase, _step),
                     VertexPositions,
+                    VertexAngles,
                     InnerCanvasSizes,
                     vertexInfos,
                     _rootCompoundVertex.InnerCanvasCenter);

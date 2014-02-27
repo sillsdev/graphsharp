@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using QuickGraph;
-using System.Diagnostics.Contracts;
-using GraphSharp;
-using System.Collections;
 using System.Diagnostics;
 
 namespace GraphSharp.Algorithms.Layout.Simple.Hierarchical

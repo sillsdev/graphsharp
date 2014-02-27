@@ -8,7 +8,7 @@ using QuickGraph;
 
 namespace GraphSharp.Controls
 {
-    public partial class GraphLayout<TVertex, TEdge, TGraph> : GraphCanvas
+    public partial class GraphLayout<TVertex, TEdge, TGraph>
         where TVertex : class
         where TEdge : IEdge<TVertex>
         where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
@@ -157,7 +157,7 @@ namespace GraphSharp.Controls
                 var edge = _edgesAdded.Dequeue();
                 CreateEdgeControl(edge);
             }
-            foreach (var vertex in verticesToInitPos)
+            foreach (TVertex vertex in verticesToInitPos)
             {
                 InitializePosition(vertex);
             }
@@ -344,5 +344,5 @@ namespace GraphSharp.Controls
             RunDestructionTransition(_edgeControls[edge], false);
             _edgeControls.Remove(edge);
         }
-	}
+    }
 }

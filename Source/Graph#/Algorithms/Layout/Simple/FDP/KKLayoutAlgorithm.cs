@@ -1,54 +1,51 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using QuickGraph;
 using System.Windows;
-using System.Diagnostics;
 
 namespace GraphSharp.Algorithms.Layout.Simple.FDP
 {
-    public class KKLayoutAlgorithm<Vertex, Edge, Graph> : DefaultParameterizedLayoutAlgorithmBase<Vertex, Edge, Graph, KKLayoutParameters>
-        where Vertex : class
-        where Edge : IEdge<Vertex>
-        where Graph : IBidirectionalGraph<Vertex, Edge>
+    public class KKLayoutAlgorithm<TVertex, TEdge, TGraph> : DefaultParameterizedLayoutAlgorithmBase<TVertex, TEdge, TGraph, KKLayoutParameters>
+        where TVertex : class
+        where TEdge : IEdge<TVertex>
+        where TGraph : IBidirectionalGraph<TVertex, TEdge>
     {
 
         #region Variables needed for the layout
         /// <summary>
         /// Minimal distances between the vertices.
         /// </summary>
-        private double[,] distances;
-        private double[,] edgeLengths;
-        private double[,] springConstants;
+        private double[,] _distances;
+        private double[,] _edgeLengths;
+        private double[,] _springConstants;
 
         //cache for speed-up
-        private Vertex[] vertices;
+        private TVertex[] _vertices;
         /// <summary>
         /// Positions of the vertices, stored by indices.
         /// </summary>
-        private Point[] positions;
+        private Point[] _positions;
 
-        private double diameter;
-        private double idealEdgeLength;
+        private double _diameter;
+        private double _idealEdgeLength;
         #endregion
 
         #region Contructors
-        public KKLayoutAlgorithm( Graph visitedGraph, KKLayoutParameters oldParameters )
-            : this( visitedGraph, null, oldParameters ) { }
+        public KKLayoutAlgorithm(TGraph visitedGraph, KKLayoutParameters oldParameters)
+            : this(visitedGraph, null, oldParameters) { }
 
-        public KKLayoutAlgorithm( Graph visitedGraph, IDictionary<Vertex, Point> vertexPositions,
-                                  KKLayoutParameters oldParameters )
-            : base( visitedGraph, vertexPositions, oldParameters ) { }
+        public KKLayoutAlgorithm(TGraph visitedGraph, IDictionary<TVertex, Point> vertexPositions, KKLayoutParameters oldParameters)
+            : base(visitedGraph, vertexPositions, oldParameters) { }
         #endregion
 
         protected override void InternalCompute()
         {
             #region Initialization
-            distances = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
-            edgeLengths = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
-            springConstants = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
-            vertices = new Vertex[VisitedGraph.VertexCount];
-            positions = new Point[VisitedGraph.VertexCount];
+            _distances = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
+            _edgeLengths = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
+            _springConstants = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
+            _vertices = new TVertex[VisitedGraph.VertexCount];
+            _positions = new Point[VisitedGraph.VertexCount];
 
             //initializing with random positions
             InitializeWithRandomPositions( Parameters.Width, Parameters.Height );
@@ -57,20 +54,20 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
             int index = 0;
             foreach ( var v in VisitedGraph.Vertices )
             {
-                vertices[index] = v;
-                positions[index] = VertexPositions[v];
+                _vertices[index] = v;
+                _positions[index] = VertexPositions[v];
                 index++;
             }
 
             //calculating the diameter of the graph
             //TODO check the diameter algorithm
-            diameter = VisitedGraph.GetDiameter<Vertex, Edge, Graph>( out distances );
+            _diameter = VisitedGraph.GetDiameter<TVertex, TEdge, TGraph>( out _distances );
 
             //L0 is the length of a side of the display area
             double L0 = Math.Min( Parameters.Width, Parameters.Height );
 
             //ideal length = L0 / max d_i,j
-            idealEdgeLength = ( L0 / diameter ) * Parameters.LengthFactor;
+            _idealEdgeLength = ( L0 / _diameter ) * Parameters.LengthFactor;
 
             //calculating the ideal distance between the nodes
             for ( int i = 0; i < VisitedGraph.VertexCount - 1; i++ )
@@ -78,16 +75,16 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
                 for ( int j = i + 1; j < VisitedGraph.VertexCount; j++ )
                 {
                     //distance between non-adjacent vertices
-                    double dist = diameter * Parameters.DisconnectedMultiplier;
+                    double dist = _diameter * Parameters.DisconnectedMultiplier;
 
                     //calculating the minimal distance between the vertices
-                    if ( distances[i, j] != double.MaxValue )
-                        dist = Math.Min( distances[i, j], dist );
-                    if ( distances[j, i] != double.MaxValue )
-                        dist = Math.Min( distances[j, i], dist );
-                    distances[i, j] = distances[j, i] = dist;
-                    edgeLengths[i, j] = edgeLengths[j, i] = idealEdgeLength * dist;
-                    springConstants[i, j] = springConstants[j, i] = Parameters.K / Math.Pow( dist, 2 );
+                    if ( _distances[i, j] != double.MaxValue )
+                        dist = Math.Min( _distances[i, j], dist );
+                    if ( _distances[j, i] != double.MaxValue )
+                        dist = Math.Min( _distances[j, i], dist );
+                    _distances[i, j] = _distances[j, i] = dist;
+                    _edgeLengths[i, j] = _edgeLengths[j, i] = _idealEdgeLength * dist;
+                    _springConstants[i, j] = _springConstants[j, i] = Parameters.K / Math.Pow( dist, 2 );
                 }
             }
             #endregion
@@ -121,7 +118,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
                 //there is an upper-bound for the while (deltaM > epsilon) {...} cycle (100)
                 for ( int i = 0; i < 100; i++ )
                 {
-                    positions[pm] += CalcDeltaXY( pm );
+                    _positions[pm] += CalcDeltaXY( pm );
 
                     double deltaM = CalculateEnergyGradient( pm );
                     //real stop condition
@@ -140,9 +137,9 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
                             double xenergy = CalcEnergyIfExchanged( i, j );
                             if ( energy > xenergy )
                             {
-                                Point p = positions[i];
-                                positions[i] = positions[j];
-                                positions[j] = p;
+                                Point p = _positions[i];
+                                _positions[i] = _positions[j];
+                                _positions[j] = p;
                                 return;
                             }
                         }
@@ -160,8 +157,8 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
         {
             #region Copy the calculated positions
             //pozíciók átmásolása a VertexPositions-ba
-            for ( int i = 0; i < vertices.Length; i++ )
-                VertexPositions[vertices[i]] = positions[i];
+            for ( int i = 0; i < _vertices.Length; i++ )
+                VertexPositions[_vertices[i]] = _positions[i];
             #endregion
 
             OnIterationEnded( currentIteration, (double)currentIteration / (double)Parameters.MaxIterations, "Iteration " + currentIteration + " finished.", true );
@@ -174,17 +171,17 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
         private double CalcEnergyIfExchanged( int p, int q )
         {
             double energy = 0;
-            for ( int i = 0; i < vertices.Length - 1; i++ )
+            for ( int i = 0; i < _vertices.Length - 1; i++ )
             {
-                for ( int j = i + 1; j < vertices.Length; j++ )
+                for ( int j = i + 1; j < _vertices.Length; j++ )
                 {
                     int ii = ( i == p ) ? q : i;
                     int jj = ( j == q ) ? p : j;
 
-                    double l_ij = edgeLengths[i, j];
-                    double k_ij = springConstants[i, j];
-                    double dx = positions[ii].X - positions[jj].X;
-                    double dy = positions[ii].Y - positions[jj].Y;
+                    double l_ij = _edgeLengths[i, j];
+                    double k_ij = _springConstants[i, j];
+                    double dx = _positions[ii].X - _positions[jj].X;
+                    double dy = _positions[ii].Y - _positions[jj].Y;
 
                     energy += k_ij / 2 * ( dx * dx + dy * dy + l_ij * l_ij -
                                            2 * l_ij * Math.Sqrt( dx * dx + dy * dy ) );
@@ -200,16 +197,16 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
         private double CalcEnergy()
         {
             double energy = 0, dist, l_ij, k_ij, dx, dy;
-            for ( int i = 0; i < vertices.Length - 1; i++ )
+            for ( int i = 0; i < _vertices.Length - 1; i++ )
             {
-                for ( int j = i + 1; j < vertices.Length; j++ )
+                for ( int j = i + 1; j < _vertices.Length; j++ )
                 {
-                    dist = distances[i, j];
-                    l_ij = edgeLengths[i, j];
-                    k_ij = springConstants[i, j];
+                    dist = _distances[i, j];
+                    l_ij = _edgeLengths[i, j];
+                    k_ij = _springConstants[i, j];
 
-                    dx = positions[i].X - positions[j].X;
-                    dy = positions[i].Y - positions[j].Y;
+                    dx = _positions[i].X - _positions[j].X;
+                    dy = _positions[i].Y - _positions[j].Y;
 
                     energy += k_ij / 2 * ( dx * dx + dy * dy + l_ij * l_ij -
                                            2 * l_ij * Math.Sqrt( dx * dx + dy * dy ) );
@@ -227,15 +224,15 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
             double dxm = 0, dym = 0, d2xm = 0, dxmdym = 0, dymdxm = 0, d2ym = 0;
             double l, k, dx, dy, d, ddd;
 
-            for ( int i = 0; i < vertices.Length; i++ )
+            for ( int i = 0; i < _vertices.Length; i++ )
             {
                 if ( i != m )
                 {
                     //common things
-                    l = edgeLengths[m, i];
-                    k = springConstants[m, i];
-                    dx = positions[m].X - positions[i].X;
-                    dy = positions[m].Y - positions[i].Y;
+                    l = _edgeLengths[m, i];
+                    k = _springConstants[m, i];
+                    dx = _positions[m].X - _positions[i].X;
+                    dy = _positions[m].Y - _positions[i].Y;
 
                     //distance between the points
                     d = Math.Sqrt( dx * dx + dy * dy );
@@ -272,19 +269,19 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
             //        {  1, if m < i
             // sign = { 
             //        { -1, if m > i
-            for ( int i = 0; i < vertices.Length; i++ )
+            for ( int i = 0; i < _vertices.Length; i++ )
             {
                 if ( i == m )
                     continue;
 
                 //differences of the positions
-                dx = ( positions[m].X - positions[i].X );
-                dy = ( positions[m].Y - positions[i].Y );
+                dx = ( _positions[m].X - _positions[i].X );
+                dy = ( _positions[m].Y - _positions[i].Y );
 
                 //distances of the two vertex (by positions)
                 d = Math.Sqrt( dx * dx + dy * dy );
 
-                common = springConstants[m, i] * ( 1 - edgeLengths[m, i] / d );
+                common = _springConstants[m, i] * ( 1 - _edgeLengths[m, i] / d );
                 dxm += common * dx;
                 dym += common * dy;
             }

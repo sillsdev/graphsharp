@@ -5,10 +5,10 @@ using System.Windows;
 
 namespace GraphSharp.Algorithms.Layout.Simple.FDP
 {
-    public class FRLayoutAlgorithm<Vertex, Edge, Graph> : ParameterizedLayoutAlgorithmBase<Vertex, Edge, Graph, FRLayoutParametersBase>
-        where Vertex : class
-        where Edge : IEdge<Vertex>
-        where Graph : IVertexAndEdgeListGraph<Vertex, Edge>
+    public class FRLayoutAlgorithm<TVertex, TEdge, TGraph> : ParameterizedLayoutAlgorithmBase<TVertex, TEdge, TGraph, FRLayoutParametersBase>
+        where TVertex : class
+        where TEdge : IEdge<TVertex>
+        where TGraph : IVertexAndEdgeListGraph<TVertex, TEdge>
     {
         /// <summary>
         /// Actual temperature of the 'mass'.
@@ -24,10 +24,10 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
         }
 
         #region Constructors
-        public FRLayoutAlgorithm(Graph visitedGraph)
+        public FRLayoutAlgorithm(TGraph visitedGraph)
             : base(visitedGraph) { }
 
-        public FRLayoutAlgorithm(Graph visitedGraph, IDictionary<Vertex, Point> vertexPositions, FRLayoutParametersBase parameters)
+        public FRLayoutAlgorithm(TGraph visitedGraph, IDictionary<TVertex, Point> vertexPositions, FRLayoutParametersBase parameters)
             : base(visitedGraph, vertexPositions, parameters) { }
         #endregion
 
@@ -65,7 +65,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
                 switch (Parameters._coolingFunction)
                 {
                     case FRCoolingFunction.Linear:
-                        _temperature *= (1.0 - (double)i / (double)Parameters._iterationLimit);
+                        _temperature *= (1.0 - (double) i / Parameters._iterationLimit);
                         break;
                     case FRCoolingFunction.Exponential:
                         _temperature *= Parameters._lambda;
@@ -75,7 +75,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
                 //iteration ended, do some report
                 if (ReportOnIterationEndNeeded)
                 {
-                    double statusInPercent = (double)i / (double)Parameters._iterationLimit;
+                    double statusInPercent = (double) i / Parameters._iterationLimit;
                     OnIterationEnded(i, statusInPercent, string.Empty, true);
                 }
             }
@@ -85,15 +85,15 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
         protected void IterateOne()
         {
             //create the forces (zero forces)
-            var forces = new Dictionary<Vertex, Vector>();
+            var forces = new Dictionary<TVertex, Vector>();
 
             #region Repulsive forces
             var force = new Vector(0, 0);
-            foreach (Vertex v in VisitedGraph.Vertices)
+            foreach (TVertex v in VisitedGraph.Vertices)
             {
                 force.X = 0; force.Y = 0;
                 Point posV = VertexPositions[v];
-                foreach (Vertex u in VisitedGraph.Vertices)
+                foreach (TVertex u in VisitedGraph.Vertices)
                 {
                     //doesn't repulse itself
                     if (u.Equals(v))
@@ -111,10 +111,10 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
             #endregion
 
             #region Attractive forces
-            foreach (Edge e in VisitedGraph.Edges)
+            foreach (TEdge e in VisitedGraph.Edges)
             {
-                Vertex source = e.Source;
-                Vertex target = e.Target;
+                TVertex source = e.Source;
+                TVertex target = e.Target;
 
                 //vonzóerõ számítása a két pont közt
                 Vector delta = VertexPositions[source] - VertexPositions[target];
@@ -127,7 +127,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
             #endregion
 
             #region Limit displacement
-            foreach (Vertex v in VisitedGraph.Vertices)
+            foreach (TVertex v in VisitedGraph.Vertices)
             {
                 Point pos = VertexPositions[v];
 

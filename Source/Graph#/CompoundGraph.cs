@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using QuickGraph;
 using System.Linq;
-using System.Diagnostics.Contracts;
 
 namespace GraphSharp
 {

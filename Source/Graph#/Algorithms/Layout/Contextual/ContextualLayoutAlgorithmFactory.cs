@@ -1,74 +1,85 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QuickGraph;
 using GraphSharp.Algorithms.Layout.Simple.Tree;
 
 namespace GraphSharp.Algorithms.Layout.Contextual
 {
-	public class ContextualLayoutAlgorithmFactory<TVertex, TEdge, TGraph> : IContextualLayoutAlgorithmFactory<TVertex, TEdge, TGraph>
-		where TVertex : class
-		where TEdge : IEdge<TVertex>
-		where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
-	{
-		private readonly string[] algorithmTypes = new[] { "DoubleTree", "BalloonTree" };
+    public class ContextualLayoutAlgorithmFactory<TVertex, TEdge, TGraph> : IContextualLayoutAlgorithmFactory<TVertex, TEdge, TGraph>
+        where TVertex : class
+        where TEdge : IEdge<TVertex>
+        where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
+    {
+        public IEnumerable<string> AlgorithmTypes
+        {
+            get { return new[] {"DoubleTree", "BalloonTree", "RadialTree"}; }
+        }
 
-		public IEnumerable<string> AlgorithmTypes
-		{
-			get { return algorithmTypes; }
-		}
+        public ILayoutAlgorithm<TVertex, TEdge, TGraph> CreateAlgorithm( string newAlgorithmType, ILayoutContext<TVertex, TEdge, TGraph> context, ILayoutParameters parameters )
+        {
+            var layoutContext = (ContextualLayoutContext<TVertex, TEdge, TGraph>) context;
 
-		public ILayoutAlgorithm<TVertex, TEdge, TGraph> CreateAlgorithm( string newAlgorithmType, ILayoutContext<TVertex, TEdge, TGraph> context, ILayoutParameters parameters )
-		{
-		    var layoutContext = context as ContextualLayoutContext<TVertex, TEdge, TGraph>;
+            switch (newAlgorithmType)
+            {
+                case "DoubleTree":
+                    return new DoubleTreeLayoutAlgorithm<TVertex, TEdge, TGraph>(layoutContext.Graph, layoutContext.Positions, layoutContext.Sizes, parameters as DoubleTreeLayoutParameters, layoutContext.SelectedVertex);
+                case "BalloonTree":
+                    return new BalloonTreeLayoutAlgorithm<TVertex, TEdge, TGraph>(layoutContext.Graph, layoutContext.Positions, parameters as BalloonTreeLayoutParameters, layoutContext.SelectedVertex);
+                case "RadialTree":
+                    return new RadialTreeLayoutAlgorithm<TVertex, TEdge, TGraph>(layoutContext.Graph, layoutContext.Positions, layoutContext.Sizes, parameters as RadialTreeLayoutParameters, layoutContext.SelectedVertex);
+                default:
+                    return null;
+            }
+        }
 
-			switch ( newAlgorithmType )
-			{
-				case "DoubleTree":
-					return new DoubleTreeLayoutAlgorithm<TVertex, TEdge, TGraph>( layoutContext.Graph, layoutContext.Positions, layoutContext.Sizes, parameters as DoubleTreeLayoutParameters, layoutContext.SelectedVertex );
-				case "BalloonTree":
-					return new BalloonTreeLayoutAlgorithm<TVertex, TEdge, TGraph>( layoutContext.Graph, layoutContext.Positions, layoutContext.Sizes, parameters as BalloonTreeLayoutParameters, layoutContext.SelectedVertex );
-				default:
-					return null;
-			}
-		}
+        public ILayoutParameters CreateParameters(string algorithmType, ILayoutParameters oldParameters)
+        {
+            switch (algorithmType)
+            {
+                case "DoubleTree":
+                    return oldParameters.CreateNewParameter<DoubleTreeLayoutParameters>();
+                case "BalloonTree":
+                    return oldParameters.CreateNewParameter<BalloonTreeLayoutParameters>();
+                case "RadialTree":
+                    return oldParameters.CreateNewParameter<RadialTreeLayoutParameters>();
+                default:
+                    return null;
+            }
+        }
 
-		public ILayoutParameters CreateParameters( string algorithmType, ILayoutParameters oldParameters )
-		{
-			switch ( algorithmType )
-			{
-				case "DoubleTree":
-					return !( oldParameters is DoubleTreeLayoutParameters ) ? new DoubleTreeLayoutParameters() : (DoubleTreeLayoutParameters)( oldParameters as DoubleTreeLayoutParameters ).Clone();
-				case "BaloonTree":
-					return !( oldParameters is BalloonTreeLayoutParameters ) ? new BalloonTreeLayoutParameters() : (BalloonTreeLayoutParameters)( oldParameters as BalloonTreeLayoutParameters ).Clone();
-				default:
-					return null;
-			}
-		}
+        public string GetAlgorithmType(ILayoutAlgorithm<TVertex, TEdge, TGraph> algorithm)
+        {
+            if (algorithm == null)
+                return string.Empty;
 
-		public string GetAlgorithmType( ILayoutAlgorithm<TVertex, TEdge, TGraph> algorithm )
-		{
-			if ( algorithm is DoubleTreeLayoutAlgorithm<TVertex, TEdge, TGraph> )
-				return "DoubleTree";
-		
-            if ( algorithm is BalloonTreeLayoutAlgorithm<TVertex, TEdge, TGraph> )
-		        return "BalloonTree";
-		    
-            return string.Empty;
-		}
+            int index = algorithm.GetType().Name.IndexOf("LayoutAlgorithm", StringComparison.Ordinal);
+            if (index == -1)
+                return string.Empty;
 
-		public bool IsValidAlgorithm( string algorithmType )
-		{
-			return ( AlgorithmTypes.Contains( algorithmType ) );
-		}
+            string algoType = algorithm.GetType().Name;
+            return algoType.Substring(0, algoType.Length - index);
+        }
 
-		public bool NeedEdgeRouting( string algorithmType )
-		{
-			return true;
-		}
+        public bool IsValidAlgorithm(string algorithmType)
+        {
+            return AlgorithmTypes.Contains(algorithmType);
+        }
 
-		public bool NeedOverlapRemoval( string algorithmType )
-		{
-			return false;
-		}
-	}
+        public bool NeedEdgeRouting(string algorithmType)
+        {
+            switch (algorithmType)
+            {
+                case "DoubleTree":
+                case "BallonTree":
+                    return true;
+            }
+            return false;
+        }
+
+        public bool NeedOverlapRemoval( string algorithmType )
+        {
+            return false;
+        }
+    }
 }

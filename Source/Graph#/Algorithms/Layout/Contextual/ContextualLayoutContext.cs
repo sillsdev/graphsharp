@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using QuickGraph;
 using System.Windows;
-using System.Diagnostics.Contracts;
 
 namespace GraphSharp.Algorithms.Layout.Contextual
 {
@@ -11,8 +10,8 @@ namespace GraphSharp.Algorithms.Layout.Contextual
     {
         public TVertex SelectedVertex { get; private set; }
 
-        public ContextualLayoutContext( TGraph graph, TVertex selectedVertex, IDictionary<TVertex, Point> positions, IDictionary<TVertex, Size> sizes )
-            : base( graph, positions, sizes, LayoutMode.Simple )
+        public ContextualLayoutContext(TGraph graph, TVertex selectedVertex, IDictionary<TVertex, Point> positions, IDictionary<TVertex, Size> sizes)
+            : base(graph, positions, sizes, LayoutMode.Simple)
         {
             SelectedVertex = selectedVertex;
         }

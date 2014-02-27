@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using QuickGraph;
-using System.Diagnostics.Contracts;
 using GraphSharp.Algorithms.Layout.Simple.Tree;
 
 namespace GraphSharp.Algorithms.Layout.Contextual
@@ -20,19 +17,19 @@ namespace GraphSharp.Algorithms.Layout.Contextual
         where TEdge : IEdge<TVertex>
         where TGraph : IBidirectionalGraph<TVertex, TEdge>
     {
-        readonly TVertex root;
-        readonly IDictionary<TVertex, Size> vertexSizes;
+        readonly TVertex _root;
+        readonly IDictionary<TVertex, Size> _vertexSizes;
 
         protected override DoubleTreeLayoutParameters DefaultParameters
         {
             get { return new DoubleTreeLayoutParameters(); }
         }
 
-        public DoubleTreeLayoutAlgorithm( TGraph visitedGraph, IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, Size> vertexSizes, DoubleTreeLayoutParameters oldParameters, TVertex selectedVertex )
+        public DoubleTreeLayoutAlgorithm(TGraph visitedGraph, IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, Size> vertexSizes, DoubleTreeLayoutParameters oldParameters, TVertex selectedVertex)
             : base( visitedGraph, vertexPositions, oldParameters )
         {
-            root = selectedVertex;
-            this.vertexSizes = ( vertexSizes ?? new Dictionary<TVertex, Size>() );
+            _root = selectedVertex;
+            _vertexSizes = ( vertexSizes ?? new Dictionary<TVertex, Size>() );
         }
 
         protected override void InternalCompute()
@@ -41,7 +38,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
             // Separate the two sides
             //
             HashSet<TVertex> side1, side2;
-            SeparateSides( VisitedGraph, root, out side1, out side2 );
+            SeparateSides( VisitedGraph, _root, out side1, out side2 );
 
             #region Build the temporary graph for the two sides
 
@@ -82,7 +79,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
                 }
             }
 
-            VertexInfos[root] = DoubleTreeVertexType.Center;
+            VertexInfos[_root] = DoubleTreeVertexType.Center;
             #endregion
 
             LayoutDirection side2Direction = Parameters.Direction;
@@ -107,7 +104,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
             // SimpleTree layout on the two side
             //
             var side1LayoutAlg = new SimpleTreeLayoutAlgorithm<TVertex, Edge<TVertex>, BidirectionalGraph<TVertex, Edge<TVertex>>>(
-                graph1, VertexPositions, vertexSizes,
+                graph1, VertexPositions, _vertexSizes,
                 new SimpleTreeLayoutParameters
                     {
                         LayerGap = Parameters.LayerGap,
@@ -116,7 +113,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
                         SpanningTreeGeneration = SpanningTreeGeneration.BFS
                     } );
             var side2LayoutAlg = new SimpleTreeLayoutAlgorithm<TVertex, TEdge, BidirectionalGraph<TVertex, TEdge>>(
-                graph2, VertexPositions, vertexSizes,
+                graph2, VertexPositions, _vertexSizes,
                 new SimpleTreeLayoutParameters
                     {
                         LayerGap = Parameters.LayerGap,
@@ -131,7 +128,7 @@ namespace GraphSharp.Algorithms.Layout.Contextual
             //
             // Merge the layouts
             //
-            var side2Translate = side1LayoutAlg.VertexPositions[root] - side2LayoutAlg.VertexPositions[root];
+            var side2Translate = side1LayoutAlg.VertexPositions[_root] - side2LayoutAlg.VertexPositions[_root];
             foreach ( var v in side1 )
                 VertexPositions[v] = side1LayoutAlg.VertexPositions[v];
 

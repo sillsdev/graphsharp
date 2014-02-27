@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Windows;
 using System.Linq;
@@ -24,7 +23,7 @@ namespace GraphSharp.Controls
     {
         public GraphLayout()
         {
-            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
+            if (DesignerProperties.GetIsInDesignMode(this))
             {
                 var g = new BidirectionalGraph<object, IEdge<object>>();
                 var vertices = new object[] { "S", "A", "M", "P", "L", "E" };
@@ -50,11 +49,13 @@ namespace GraphSharp.Controls
     /// <typeparam name="TVertex">Type of the vertices.</typeparam>
     /// <typeparam name="TEdge">Type of the edges.</typeparam>
     /// <typeparam name="TGraph">Type of the graph.</typeparam>
-    public partial class GraphLayout<TVertex, TEdge, TGraph> : GraphCanvas
+    public partial class GraphLayout<TVertex, TEdge, TGraph>
         where TVertex : class
         where TEdge : IEdge<TVertex>
         where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
     {
+        public event EventHandler LayoutFinished;
+
         protected readonly Dictionary<TEdge, EdgeControl> _edgeControls = new Dictionary<TEdge, EdgeControl>();
         private readonly Queue<TEdge> _edgesAdded = new Queue<TEdge>();
         private readonly Queue<TEdge> _edgesRemoved = new Queue<TEdge>();
@@ -156,22 +157,20 @@ namespace GraphSharp.Controls
 
             if (ActualLayoutMode == Algorithms.Layout.LayoutMode.Simple)
                 return new LayoutContext<TVertex, TEdge, TGraph>(Graph, positions, sizes, ActualLayoutMode);
-            else
-            {
-                var borders = (from kvp in _vertexControls
+
+            var borders = (from kvp in _vertexControls
+                           where kvp.Value is CompoundVertexControl
+                           select kvp).ToDictionary(
+                               kvp => kvp.Key,
+                               kvp => ((CompoundVertexControl)kvp.Value).VertexBorderThickness);
+
+            var layoutTypes = (from kvp in _vertexControls
                                where kvp.Value is CompoundVertexControl
                                select kvp).ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => ((CompoundVertexControl)kvp.Value).VertexBorderThickness);
+                                   kvp => kvp.Key,
+                                   kvp => ((CompoundVertexControl)kvp.Value).LayoutMode);
 
-                var layoutTypes = (from kvp in _vertexControls
-                                   where kvp.Value is CompoundVertexControl
-                                   select kvp).ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => ((CompoundVertexControl)kvp.Value).LayoutMode);
-
-                return new CompoundLayoutContext<TVertex, TEdge, TGraph>(Graph, positions, sizes, ActualLayoutMode, borders, layoutTypes);
-            }
+            return new CompoundLayoutContext<TVertex, TEdge, TGraph>(Graph, positions, sizes, ActualLayoutMode, borders, layoutTypes);
         }
 
         protected virtual IHighlightContext<TVertex, TEdge, TGraph> CreateHighlightContext()
@@ -206,17 +205,20 @@ namespace GraphSharp.Controls
             if (Graph == null || Graph.VertexCount == 0 || !LayoutAlgorithmFactory.IsValidAlgorithm(LayoutAlgorithmType) || !CanLayout)
                 return; //no graph to layout, or wrong layout algorithm
 
+            // reset angles
+            foreach (VertexControl vc in _vertexControls.Values)
+                vc.Angle = 0;
+
             UpdateLayout();
-            if (!this.IsLoaded)
+            if (!IsVisible)
             {
-                RoutedEventHandler handler = null;
-                handler = new RoutedEventHandler((s, e) =>
-                {
-                    Layout(continueLayout);
-                    var gl = (GraphLayout<TVertex, TEdge, TGraph>)e.Source;
-                    gl.Loaded -= handler;
-                });
-                this.Loaded += handler;
+                DependencyPropertyChangedEventHandler handler = null;
+                handler = (s, e) =>
+                    {
+                        Layout(continueLayout);
+                        IsVisibleChanged -= handler;
+                    };
+                IsVisibleChanged += handler;
                 return;
             }
 
@@ -225,7 +227,7 @@ namespace GraphSharp.Controls
             IDictionary<TVertex, Size> oldSizes = GetLatestVertexSizes();
 
             //create the context
-            var layoutContext = CreateLayoutContext(oldPositions, oldSizes);
+            ILayoutContext<TVertex, TEdge, TGraph> layoutContext = CreateLayoutContext(oldPositions, oldSizes);
 
             //create the layout algorithm using the factory
             LayoutAlgorithm = LayoutAlgorithmFactory.CreateAlgorithm(LayoutAlgorithmType, layoutContext,
@@ -321,7 +323,7 @@ namespace GraphSharp.Controls
             //go through the vertex presenters and get the actual layoutpositions
             if (ActualLayoutMode == Algorithms.Layout.LayoutMode.Simple)
             {
-                foreach (var vc in _vertexControls)
+                foreach (KeyValuePair<TVertex, VertexControl> vc in _vertexControls)
                 {
                     var x = GetX(vc.Value);
                     var y = GetY(vc.Value);
@@ -333,8 +335,8 @@ namespace GraphSharp.Controls
             }
             else
             {
-                Point topLeft = new Point(0, 0);
-                foreach (var vc in _vertexControls)
+                var topLeft = new Point(0, 0);
+                foreach (KeyValuePair<TVertex, VertexControl> vc in _vertexControls)
                 {
                     Point position = vc.Value.TranslatePoint(topLeft, this);
                     position.X += vc.Value.ActualWidth / 2;
@@ -385,6 +387,22 @@ namespace GraphSharp.Controls
             return posDict;
         }
 
+        private void SetVertexAngles(IDictionary<TVertex, double> angles)
+        {
+            bool update = false;
+            foreach (KeyValuePair<TVertex, double> kvp in angles)
+            {
+                VertexControl vp;
+                if (_vertexControls.TryGetValue(kvp.Key, out vp))
+                {
+                    vp.Angle = kvp.Value;
+                    update = true;
+                }
+            }
+            if (update)
+                UpdateLayout();
+        }
+
         private IDictionary<TVertex, Size> GetLatestVertexSizes()
         {
             if (!IsMeasureValid)
@@ -419,25 +437,25 @@ namespace GraphSharp.Controls
                 {
 
                 }
-                OnLayoutIterationFinished(LayoutAlgorithm.VertexPositions, null);
+                OnLayoutIterationFinished(LayoutAlgorithm.VertexPositions, LayoutAlgorithm.VertexAngles, null);
                 SetLayoutInformations();
             }
             else
             {
                 //TODO compound layout
-                OnLayoutIterationFinished(iterArgs.VertexPositions, iterArgs.Message);
+                OnLayoutIterationFinished(iterArgs.VertexPositions, iterArgs.VertexAngles, iterArgs.Message);
                 LayoutStatusPercent = iterArgs.StatusInPercent;
                 SetLayoutInformations(iterArgs as ILayoutInfoIterationEventArgs<TVertex, TEdge>);
             }
         }
 
         protected virtual void OnLayoutIterationFinished(
-            IDictionary<TVertex, Point> vertexPositions,
-            string message)
+            IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, double> vertexAngles, string message)
         {
-            var sizes = GetLatestVertexSizes();
-            var overlapRemovedPositions = OverlapRemoval(vertexPositions, sizes);
-            var edgeRoutingInfos = RouteEdges(overlapRemovedPositions, sizes);
+            SetVertexAngles(vertexAngles);
+            IDictionary<TVertex, Size> sizes = GetLatestVertexSizes();
+            IDictionary<TVertex, Point> overlapRemovedPositions = OverlapRemoval(vertexPositions, sizes);
+            IDictionary<TEdge, Point[]> edgeRoutingInfos = RouteEdges(overlapRemovedPositions, sizes);
 
             var state = new LayoutState<TVertex, TEdge>(
                 vertexPositions,
@@ -462,6 +480,9 @@ namespace GraphSharp.Controls
                 ChangeState(StateIndex);
 
             LayoutStatusPercent = 100;
+
+            if (LayoutFinished != null)
+                LayoutFinished(this, new EventArgs());
         }
 
         private void SetLayoutInformations(ILayoutInfoIterationEventArgs<TVertex, TEdge> iterArgs)
@@ -527,7 +548,7 @@ namespace GraphSharp.Controls
                                                                                         OverlapRemovalParameters);
 
             //create the context - rectangles, ...
-            var context = CreateOverlapRemovalContext(positions, sizes);
+            IOverlapRemovalContext<TVertex> context = CreateOverlapRemovalContext(positions, sizes);
 
             //create the concreate algorithm
             OverlapRemovalAlgorithm = OverlapRemovalAlgorithmFactory.CreateAlgorithm(OverlapRemovalAlgorithmType,
@@ -555,9 +576,9 @@ namespace GraphSharp.Controls
         /// </summary>
         /// <param name="positions">The vertex positions.</param>
         /// <param name="sizes">The sizes of the vertices.</param>
+        /// <param name="angles">The angles of the vertices.</param>
         /// <returns>The routes of the edges.</returns>
-        protected IDictionary<TEdge, Point[]> RouteEdges(IDictionary<TVertex, Point> positions,
-                                                          IDictionary<TVertex, Size> sizes)
+        protected IDictionary<TEdge, Point[]> RouteEdges(IDictionary<TVertex, Point> positions, IDictionary<TVertex, Size> sizes)
         {
             IEdgeRoutingAlgorithm<TVertex, TEdge, TGraph> algorithm = null;
             bool isValidAlgorithmType = EdgeRoutingAlgorithmFactory.IsValidAlgorithm(EdgeRoutingAlgorithmType);
@@ -568,7 +589,7 @@ namespace GraphSharp.Controls
                 EdgeRoutingParameters = EdgeRoutingAlgorithmFactory.CreateParameters(EdgeRoutingAlgorithmType,
                                                                                       EdgeRoutingParameters);
 
-                var context = CreateLayoutContext(positions, sizes);
+                ILayoutContext<TVertex, TEdge, TGraph> context = CreateLayoutContext(positions, sizes);
 
                 algorithm = EdgeRoutingAlgorithmFactory.CreateAlgorithm(EdgeRoutingAlgorithmType, context,
                                                                          EdgeRoutingParameters);
@@ -609,18 +630,18 @@ namespace GraphSharp.Controls
 
             LayoutState = activeState;
 
-            var positions = activeState.OverlapRemovedPositions;
+            IDictionary<TVertex, Point> positions = activeState.OverlapRemovedPositions;
 
             //Animate the vertices
             if (positions != null)
             {
-                Point pos;
-                foreach (var v in Graph.Vertices)
+                foreach (TVertex v in Graph.Vertices)
                 {
                     VertexControl vp;
                     if (!_vertexControls.TryGetValue(v, out vp))
                         continue;
 
+                    Point pos;
                     if (positions.TryGetValue(v, out pos))
                         RunMoveAnimation(vp, pos.X, pos.Y);
                 }
@@ -629,7 +650,7 @@ namespace GraphSharp.Controls
             //Change the edge routes
             if (activeState.RouteInfos != null)
             {
-                foreach (var e in Graph.Edges)
+                foreach (TEdge e in Graph.Edges)
                 {
                     EdgeControl ec;
                     if (!_edgeControls.TryGetValue(e, out ec))

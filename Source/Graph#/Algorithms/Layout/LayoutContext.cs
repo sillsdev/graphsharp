@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using QuickGraph;
 using System.Windows;
 
@@ -17,7 +16,7 @@ namespace GraphSharp.Algorithms.Layout
 
         public LayoutMode Mode { get; private set; }
 
-        public LayoutContext( TGraph graph, IDictionary<TVertex, Point> positions, IDictionary<TVertex, Size> sizes, LayoutMode mode )
+        public LayoutContext(TGraph graph, IDictionary<TVertex, Point> positions, IDictionary<TVertex, Size> sizes, LayoutMode mode)
         {
             Graph = graph;
             Positions = positions;

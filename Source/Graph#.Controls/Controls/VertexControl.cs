@@ -5,19 +5,19 @@ using System;
 
 namespace GraphSharp.Controls
 {
-	/// <summary>
-	/// Logical representation of a vertex.
-	/// </summary>
-	public class VertexControl : Control, IPoolObject, IDisposable
-	{
-		public object Vertex
-		{
-			get { return GetValue( VertexProperty ); }
-			set { SetValue( VertexProperty, value ); }
-		}
+    /// <summary>
+    /// Logical representation of a vertex.
+    /// </summary>
+    public class VertexControl : Control, IPoolObject, IDisposable
+    {
+        public object Vertex
+        {
+            get { return GetValue( VertexProperty ); }
+            set { SetValue( VertexProperty, value ); }
+        }
 
-		public static readonly DependencyProperty VertexProperty =
-			DependencyProperty.Register( "Vertex", typeof( object ), typeof( VertexControl ), new UIPropertyMetadata( null ) );
+        public static readonly DependencyProperty VertexProperty =
+            DependencyProperty.Register("Vertex", typeof(object), typeof(VertexControl), new UIPropertyMetadata(null));
 
 
         public GraphCanvas RootCanvas
@@ -29,32 +29,41 @@ namespace GraphSharp.Controls
         public static readonly DependencyProperty RootCanvasProperty =
             DependencyProperty.Register("RootCanvas", typeof(GraphCanvas), typeof(VertexControl), new UIPropertyMetadata(null));
 
-		static VertexControl()
-		{
-			//override the StyleKey Property
-			DefaultStyleKeyProperty.OverrideMetadata( typeof( VertexControl ), new FrameworkPropertyMetadata( typeof( VertexControl ) ) );
-		}
+        public static readonly DependencyProperty AngleProperty =
+            DependencyProperty.Register("Angle", typeof(double), typeof(VertexControl), new UIPropertyMetadata(0.0));
 
-		#region IPoolObject Members
+        public double Angle
+        {
+            get { return (double) GetValue(AngleProperty); }
+            set { SetValue(AngleProperty, value); }
+        }
 
-		public void Reset()
-		{
-			Vertex = null;
-		}
+        static VertexControl()
+        {
+            //override the StyleKey Property
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(VertexControl), new FrameworkPropertyMetadata(typeof(VertexControl)));
+        }
 
-		public void Terminate()
-		{
-			//nothing to do, there are no unmanaged resources
-		}
+        #region IPoolObject Members
 
-		public event DisposingHandler Disposing;
+        public void Reset()
+        {
+            Vertex = null;
+        }
 
-		public void Dispose()
-		{
-			if ( Disposing != null )
-				Disposing( this );
-		}
+        public void Terminate()
+        {
+            //nothing to do, there are no unmanaged resources
+        }
 
-		#endregion
-	}
+        public event DisposingHandler Disposing;
+
+        public void Dispose()
+        {
+            if (Disposing != null)
+                Disposing(this);
+        }
+
+        #endregion
+    }
 }

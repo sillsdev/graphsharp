@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using GraphSharp.Algorithms.EdgeRouting;
 using GraphSharp.Algorithms.Highlight;
@@ -378,6 +375,7 @@ namespace GraphSharp.Controls
             if (g == null)
             {
                 gl.LayoutMode = LayoutMode.Automatic;
+                gl.RemoveAllGraphElement();
                 return;
             }
 

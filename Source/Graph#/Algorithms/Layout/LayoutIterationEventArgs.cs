@@ -12,30 +12,31 @@ namespace GraphSharp.Algorithms.Layout
 		where TEdge : IEdge<TVertex>
 	{
 		public LayoutIterationEventArgs()
-			: this( 0, 0, string.Empty, null, null, null )
+			: this( 0, 0, string.Empty, null, null, null, null )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent )
-			: this( iteration, statusInPercent, string.Empty, null, null, null )
+			: this( iteration, statusInPercent, string.Empty, null, null, null, null )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent, string message )
-			: this( iteration, statusInPercent, message, null, null, null )
+			: this( iteration, statusInPercent, message, null, null, null, null )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent,
-		                                 IDictionary<TVertex, Point> vertexPositions )
-			: this( iteration, statusInPercent, string.Empty, vertexPositions, null, null )
+		                                 IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, double> vertexAngles )
+			: this( iteration, statusInPercent, string.Empty, vertexPositions, vertexAngles, null, null )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent, string message,
 		                                 IDictionary<TVertex, Point> vertexPositions,
-		                                 IDictionary<TVertex, TVertexInfo> vertexInfos,
+										 IDictionary<TVertex, double> vertexAngles,
+										 IDictionary<TVertex, TVertexInfo> vertexInfos,
 		                                 IDictionary<TEdge, TEdgeInfo> edgeInfos)
-			: base( iteration, statusInPercent, message, vertexPositions )
+			: base( iteration, statusInPercent, message, vertexPositions, vertexAngles )
 		{
-			this.VertexInfos = vertexInfos;
-			this.EdgeInfos = edgeInfos;
+			VertexInfos = vertexInfos;
+			EdgeInfos = edgeInfos;
 		}
 
 		public IDictionary<TVertex, TVertexInfo> VertexInfos { get; private set; }
@@ -59,37 +60,36 @@ namespace GraphSharp.Algorithms.Layout
 	}
 
 	public class LayoutIterationEventArgs<TVertex, TEdge> 
-        : EventArgs, 
-            ILayoutIterationEventArgs<TVertex>, 
-            ILayoutInfoIterationEventArgs<TVertex, TEdge>
+        : EventArgs, ILayoutInfoIterationEventArgs<TVertex, TEdge>
 		where TVertex : class
 		where TEdge : IEdge<TVertex>
 	{
 		public LayoutIterationEventArgs()
-			: this( 0, 0, string.Empty, null )
+			: this( 0, 0, string.Empty, null, null )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent )
-			: this( iteration, statusInPercent, string.Empty, null )
+			: this( iteration, statusInPercent, string.Empty, null, null )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent, string message )
-			: this( iteration, statusInPercent, message, null )
+			: this( iteration, statusInPercent, message, null, null )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent,
-		                                 IDictionary<TVertex, Point> vertexPositions )
-			: this( iteration, statusInPercent, string.Empty, vertexPositions )
+		                                 IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, double> vertexAngles )
+			: this( iteration, statusInPercent, string.Empty, vertexPositions, vertexAngles )
 		{ }
 
 		public LayoutIterationEventArgs( int iteration, double statusInPercent, string message,
-		                                 IDictionary<TVertex, Point> vertexPositions )
+		                                 IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, double> vertexAngles )
 		{
-			this.StatusInPercent = statusInPercent;
-			this.Iteration = iteration;
-			this.Abort = false;
-			this.Message = message;
-			this.VertexPositions = vertexPositions;
+			StatusInPercent = statusInPercent;
+			Iteration = iteration;
+			Abort = false;
+			Message = message;
+			VertexPositions = vertexPositions;
+			VertexAngles = vertexAngles;
 		}
 
 		/// <summary>
@@ -113,6 +113,8 @@ namespace GraphSharp.Algorithms.Layout
 		public string Message { get; private set; }
 
 		public IDictionary<TVertex, Point> VertexPositions { get; private set; }
+
+		public IDictionary<TVertex, double> VertexAngles { get; private set; }
 
 		public virtual object GetVertexInfo( TVertex vertex )
 		{

@@ -14,8 +14,9 @@ namespace GraphSharp.Algorithms.Layout.Compound
             double statusInPercent, 
             string message,
             IDictionary<TVertex, Point> vertexPositions,
+            IDictionary<TVertex, double> vertexAngles,
             IDictionary<TVertex, Size> innerCanvasSizes)
-            : base(iteration, statusInPercent, message, vertexPositions)
+            : base(iteration, statusInPercent, message, vertexPositions, vertexAngles)
         {
             InnerCanvasSizes = innerCanvasSizes;
         }

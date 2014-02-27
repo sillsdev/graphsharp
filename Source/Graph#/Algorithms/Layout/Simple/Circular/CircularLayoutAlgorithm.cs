@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Windows;
-using System.Diagnostics;
 using QuickGraph;
 
 namespace GraphSharp.Algorithms.Layout.Simple.Circular
@@ -13,15 +10,13 @@ namespace GraphSharp.Algorithms.Layout.Simple.Circular
         where TEdge : IEdge<TVertex>
         where TGraph : IBidirectionalGraph<TVertex, TEdge>
     {
-        readonly IDictionary<TVertex, Size> sizes;
+        readonly IDictionary<TVertex, Size> _sizes;
 
-        public CircularLayoutAlgorithm( TGraph visitedGraph, IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, Size> vertexSizes, CircularLayoutParameters parameters )
-            : base( visitedGraph, vertexPositions, parameters )
+        public CircularLayoutAlgorithm(TGraph visitedGraph, IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, Size> vertexSizes,
+            CircularLayoutParameters parameters)
+            : base(visitedGraph, vertexPositions, parameters)
         {
-            //Contract.Requires( vertexSizes != null );
-            //Contract.Requires( visitedGraph.Vertices.All( v => vertexSizes.ContainsKey( v ) ) );
-
-            sizes = vertexSizes;
+            _sizes = vertexSizes;
         }
 
         protected override void InternalCompute()
@@ -32,7 +27,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.Circular
             int i = 0;
             foreach ( var v in VisitedGraph.Vertices )
             {
-                Size s = sizes[v];
+                Size s = _sizes[v];
                 halfSize[i] = Math.Sqrt( s.Width * s.Width + s.Height * s.Height ) * 0.5;
                 perimeter += halfSize[i] * 2;
                 i++;
