@@ -38,10 +38,47 @@ namespace GraphSharp.Controls
             set { SetValue(AngleProperty, value); }
         }
 
+        private static readonly DependencyPropertyKey OriginalWidthPropertyKey =
+            DependencyProperty.RegisterReadOnly("OriginalWidth", typeof(double), typeof(VertexControl), new FrameworkPropertyMetadata());
+
+        public static readonly DependencyProperty OriginalWidthProperty = OriginalWidthPropertyKey.DependencyProperty;
+
+        public double OriginalWidth
+        {
+            get { return (double) GetValue(OriginalWidthProperty); }
+            private set { SetValue(OriginalWidthPropertyKey, value); }
+        }
+
+        private static readonly DependencyPropertyKey OriginalHeightPropertyKey =
+            DependencyProperty.RegisterReadOnly("OriginalHeight", typeof(double), typeof(VertexControl), new FrameworkPropertyMetadata());
+
+        public static readonly DependencyProperty OriginalHeightProperty = OriginalHeightPropertyKey.DependencyProperty;
+
+        public double OriginalHeight
+        {
+            get { return (double) GetValue(OriginalHeightProperty); }
+            private set { SetValue(OriginalHeightPropertyKey, value); }
+        }
+
         static VertexControl()
         {
             //override the StyleKey Property
             DefaultStyleKeyProperty.OverrideMetadata(typeof(VertexControl), new FrameworkPropertyMetadata(typeof(VertexControl)));
+        }
+
+        public VertexControl()
+        {
+            SizeChanged += VertexControl_SizeChanged;
+        }
+
+        private void VertexControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var border = (FrameworkElement) Template.FindName("Border", this);
+            if (border != null)
+            {
+                OriginalWidth = border.ActualWidth;
+                OriginalHeight = border.ActualHeight;
+            }
         }
 
         #region IPoolObject Members

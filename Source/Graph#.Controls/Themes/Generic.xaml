@@ -25,21 +25,25 @@
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
                                                  Path="Source.(controls:GraphCanvas.Y)" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
-                                                 Path="Source.ActualWidth" />
+                                                 Path="Source.OriginalWidth" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
-                                                 Path="Source.ActualHeight" />
+                                                 Path="Source.OriginalHeight" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
                                                  Path="Target.(controls:GraphCanvas.X)" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
                                                  Path="Target.(controls:GraphCanvas.Y)" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
-                                                 Path="Target.ActualWidth" />
+                                                 Path="Target.OriginalWidth" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
-                                                 Path="Target.ActualHeight" />
+                                                 Path="Target.OriginalHeight" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
                                                  Path="RoutePoints" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}"
                                                  Path="IsDirected" />
+										<Binding RelativeSource="{RelativeSource TemplatedParent}"
+                                                 Path="Source.Angle" />
+										<Binding RelativeSource="{RelativeSource TemplatedParent}"
+                                                 Path="Target.Angle" />
                                     </MultiBinding>
                                 </PathGeometry.Figures>
                             </PathGeometry>
@@ -98,12 +102,12 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:VertexControl}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                    <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}"
                             ToolTip="{TemplateBinding ToolTip}">
                         <Border.LayoutTransform>
-	                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Angle}" />
+	                        <RotateTransform CenterX="0.5" CenterY="0.5" Angle="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Angle}" />
                         </Border.LayoutTransform>
 						<ContentPresenter Content="{TemplateBinding Vertex}" />
                     </Border>

@@ -12,7 +12,7 @@ namespace GraphSharp.Converters
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			Debug.Assert( values != null && values.Length == 10, "EdgeRouteToPathConverter should have 10 parameters: pos (0, 1), size (2, 3) of source; pos (4, 5), size (6, 7) of target; routeInformation (8); directed (9)." );
+			Debug.Assert( values != null && values.Length == 12, "EdgeRouteToPathConverter should have 10 parameters: pos (0, 1), size (2, 3) of source; pos (4, 5), size (6, 7) of target; routeInformation (8); directed (9); angle (10) of source; angle (11) of target." );
 			var sourcePos = new Point
 				{
 					X = values[0] != DependencyProperty.UnsetValue ? (double) values[0] : 0.0,
@@ -42,10 +42,16 @@ namespace GraphSharp.Converters
 
 			bool directed = values[9] == DependencyProperty.UnsetValue || (bool) values[9];
 
+		    double sourceAngle = values[10] != DependencyProperty.UnsetValue ? (double) values[10] : 0.0;
+            double targetAngle = values[11] != DependencyProperty.UnsetValue ? (double) values[11] : 0.0;
+
+		    if (double.IsNaN(sourcePos.X) || double.IsNaN(sourcePos.Y) || double.IsNaN(targetPos.X) || double.IsNaN(targetPos.Y))
+		        return DependencyProperty.UnsetValue;
+
 			bool hasRouteInfo = routeInformation != null && routeInformation.Length > 0;
 
-			Point p1 = CalculateAttachPoint(sourcePos, sourceSize, hasRouteInfo ? routeInformation[0] : targetPos);
-			Point p2 = CalculateAttachPoint(targetPos, targetSize, hasRouteInfo ? routeInformation[routeInformation.Length - 1] : sourcePos);
+			Point p1 = CalculateAttachPoint(sourceAngle, sourcePos, sourceSize, hasRouteInfo ? routeInformation[0] : targetPos);
+			Point p2 = CalculateAttachPoint(targetAngle, targetPos, targetSize, hasRouteInfo ? routeInformation[routeInformation.Length - 1] : sourcePos);
 
 			var edgeFigure = new PathFigure {StartPoint = p1};
 			if (hasRouteInfo)
@@ -81,23 +87,59 @@ namespace GraphSharp.Converters
 			return pfc;
 		}
 
-		private static Point CalculateAttachPoint(Point s, Size sourceSize, Point t)
+		private static Point CalculateAttachPoint(double angle, Point s, Size sourceSize, Point t)
 		{
-			var sides = new double[4];
-			sides[0] = (s.X - sourceSize.Width / 2.0 - t.X) / (s.X - t.X);
-			sides[1] = (s.Y - sourceSize.Height / 2.0 - t.Y) / (s.Y - t.Y);
-			sides[2] = (s.X + sourceSize.Width / 2.0 - t.X) / (s.X - t.X);
-			sides[3] = (s.Y + sourceSize.Height / 2.0 - t.Y) / (s.Y - t.Y);
+		    if (Math.Abs(sourceSize.Width - 0) < double.Epsilon && Math.Abs(sourceSize.Height - 0) < double.Epsilon)
+		        return s;
 
-			double fi = 0;
-			for (int i = 0; i < 4; i++)
-			{
-				if (sides[i] <= 1)
-					fi = Math.Max(fi, sides[i]);
-			}
+		    var matrix = new Matrix();
+            matrix.RotateAt(angle, s.X, s.Y);
 
-			return t + fi * (s - t);
+		    var topLeft = new Point(s.X - (sourceSize.Width / 2), s.Y - (sourceSize.Height / 2));
+		    var points = new[]
+		        {
+		            topLeft,
+                    new Point(topLeft.X + sourceSize.Width, topLeft.Y),
+                    new Point(topLeft.X + sourceSize.Width, topLeft.Y + sourceSize.Height),
+                    new Point(topLeft.X, topLeft.Y + sourceSize.Height)
+		        };
+
+		    matrix.Transform(points);
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                Point attachPoint;
+		        if (Intersects(s, t, points[i], points[(i + 1) % points.Length], out attachPoint))
+		            return attachPoint;
+            }
+
+		    return s;
 		}
+
+        private static bool Intersects(Point a1, Point a2, Point b1, Point b2, out Point intersection)
+        {
+            intersection = new Point();
+
+            Vector b = a2 - a1;
+            Vector d = b2 - b1;
+
+            double bdotd = b.X * d.Y - b.Y * d.X;
+
+            if (Math.Abs(bdotd - 0) < double.Epsilon)
+                return false;
+
+            Vector c = b1 - a1;
+            double t = (c.X * d.Y - c.Y * d.X) / bdotd;
+            if (t < 0 || t > 1)
+                return false;
+
+            double u = (c.X * b.Y - c.Y * b.X) / bdotd;
+            if (u < 0 || u > 1)
+                return false;
+
+            intersection = a1 + t * b;
+            return true;
+        }
 
 		private static void ConnectLinePoints(PathFigure pathFigure, Point p1, Point p2, Point p3, double roundness)
 		{

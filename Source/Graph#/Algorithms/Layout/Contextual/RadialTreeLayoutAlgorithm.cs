@@ -108,7 +108,8 @@ namespace GraphSharp.Algorithms.Layout.Contextual
                 TVertex parent = inEdge.OtherVertex(v);
                 double angle = wedgeBorderAngle + (wedgeSize / 2);
                 Size parentSize = _vertexSizes[parent];
-                double len = GetLength(inEdge) + (parentSize.Width / 2) + 5;
+                Size vSize = _vertexSizes[v];
+                double len = GetLength(inEdge) + (parentSize.Width / 2) + (vSize.Width / 2);
                 double xDelta = Math.Cos(angle) * len;
                 double yDelta = Math.Sin(angle) * len;
                 Point parentPoint = VertexPositions[parent];
