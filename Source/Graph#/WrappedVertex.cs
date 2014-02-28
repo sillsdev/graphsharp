@@ -2,15 +2,15 @@
 {
 	public class WrappedVertex<TVertex>
 	{
-		private TVertex originalVertex;
+		private readonly TVertex _originalVertex;
 		public TVertex Original
 		{
-			get { return originalVertex; }
+			get { return _originalVertex; }
 		}
 
 		public WrappedVertex(TVertex original)
 		{
-			this.originalVertex = original;
+			_originalVertex = original;
 		}
 	}
 }

@@ -31,14 +31,14 @@ namespace GraphSharp.Algorithms.Layout.Simple.Grid
             {
                 foreach (TVertex vertex in VisitedGraph.Vertices)
                 {
-                    var gridVertex = vertex as IGridVertex;
+                    GridVertexInfo info = Parameters.GetVertexInfo(vertex);
                     int row, column, rowSpan, columnSpan;
-                    if (gridVertex != null)
+                    if (info != null)
                     {
-                        row = gridVertex.Row;
-                        column = gridVertex.Column;
-                        rowSpan = gridVertex.RowSpan;
-                        columnSpan = gridVertex.ColumnSpan;
+                        row = info.Row;
+                        column = info.Column;
+                        rowSpan = info.RowSpan;
+                        columnSpan = info.ColumnSpan;
                     }
                     else
                     {
@@ -71,18 +71,18 @@ namespace GraphSharp.Algorithms.Layout.Simple.Grid
             curColumn = 0;
             foreach (TVertex vertex in VisitedGraph.Vertices)
             {
-                var gridVertex = vertex as IGridVertex;
+                GridVertexInfo info = Parameters.GetVertexInfo(vertex);
                 int row, column, rowSpan, columnSpan;
                 GridHorizontalAlignment horzAlign;
                 GridVerticalAlignment vertAlign;
-                if (gridVertex != null)
+                if (info != null)
                 {
-                    row = gridVertex.Row;
-                    column = gridVertex.Column;
-                    rowSpan = gridVertex.RowSpan;
-                    columnSpan = gridVertex.ColumnSpan;
-                    horzAlign = gridVertex.HorizontalAlignment;
-                    vertAlign = gridVertex.VerticalAlignment;
+                    row = info.Row;
+                    column = info.Column;
+                    rowSpan = info.RowSpan;
+                    columnSpan = info.ColumnSpan;
+                    horzAlign = info.HorizontalAlignment;
+                    vertAlign = info.VerticalAlignment;
                 }
                 else
                 {

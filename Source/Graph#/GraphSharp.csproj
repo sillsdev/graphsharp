@@ -317,7 +317,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ICompoundGraph.cs" />
-    <Compile Include="IGridVertex.cs" />
     <Compile Include="IHierarchicalBidirectionalGraph.cs">
       <SubType>Code</SubType>
     </Compile>
