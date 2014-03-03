@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace GraphSharp.Algorithms.EdgeRouting
 {
 	internal class RotationTreeNode : IComparable<RotationTreeNode>
 	{
 		private readonly Obstacle _obstacle;
-		private readonly Point2D _point;
+		private readonly Point _point;
 		private readonly List<ObstacleSegment> _segments;
 		private readonly bool _isSinglePoint;
  
-		public RotationTreeNode(Obstacle obstacle, Point2D point, bool isSinglePoint)
+		public RotationTreeNode(Obstacle obstacle, Point point, bool isSinglePoint)
 		{
 			_obstacle = obstacle;
 			_point = point;
@@ -18,12 +19,12 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			_segments = new List<ObstacleSegment>();
 		}
 
-		public RotationTreeNode(Point2D point)
+		public RotationTreeNode(Point point)
 			: this(null, point, true)
 		{
 		}
 
-		public Point2D Point
+		public Point Point
 		{
 			get { return _point; }
 		}

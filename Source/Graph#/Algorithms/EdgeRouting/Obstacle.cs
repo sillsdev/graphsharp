@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace GraphSharp.Algorithms.EdgeRouting
 {
@@ -9,20 +10,20 @@ namespace GraphSharp.Algorithms.EdgeRouting
 	{
 		private readonly List<RotationTreeNode> _nodes;
 		private readonly List<ObstacleSegment> _segments;
-		private readonly List<Point2D> _points; 
+		private readonly List<Point> _points; 
 
-		public Obstacle(params Point2D[] points)
-			: this((IEnumerable<Point2D>) points)
+		public Obstacle(params Point[] points)
+			: this((IEnumerable<Point>) points)
 		{
 		}
 
-		public Obstacle(IEnumerable<Point2D> points)
+		public Obstacle(IEnumerable<Point> points)
 		{
 			_points = points.ToList();
 			_nodes = new List<RotationTreeNode>();
 			_segments = new List<ObstacleSegment>();
 			RotationTreeNode lastPoint = null;
-			foreach (Point2D point in _points)
+			foreach (Point point in _points)
 			{
 				var newPoint = new RotationTreeNode(this, point, false);
 				_nodes.Add(newPoint);
@@ -36,7 +37,7 @@ namespace GraphSharp.Algorithms.EdgeRouting
 				_segments.Add(new ObstacleSegment(this, _nodes[_nodes.Count - 1], _nodes[0]));
 		}
 
-		public IList<Point2D> Points
+		public IList<Point> Points
 		{
 			get { return _points; }
 		}
@@ -51,7 +52,7 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			get { return _segments; }
 		}
 
-		public bool Contains(Point2D p)
+		public bool Contains(Point p)
 		{
 			if (_points.Count < 3)
 				return false;
@@ -118,7 +119,7 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			var sb = new StringBuilder();
 			bool first = true;
 			sb.Append("[");
-			foreach (Point2D point in _points)
+			foreach (Point point in _points)
 			{
 				if (!first)
 					sb.Append(",");

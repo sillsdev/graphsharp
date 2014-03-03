@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using QuickGraph;
 
 namespace GraphSharp.Algorithms.EdgeRouting
@@ -9,20 +10,20 @@ namespace GraphSharp.Algorithms.EdgeRouting
 	{
 		private readonly HashSet<Obstacle> _obstacles;
 		private readonly List<RotationTreeNode> _nodes;
-		private UndirectedGraph<Point2D, Edge<Point2D>> _graph;
-		private readonly HashSet<Point2D> _singlePoints;
+		private UndirectedGraph<PointVertex, Edge<PointVertex>> _graph;
+		private readonly HashSet<Point> _singlePoints;
 		private RotationTreeNode _minusInf;
 		private RotationTreeNode _plusInf;
 
 		public VisibilityGraph()
-			: this(Enumerable.Empty<Obstacle>(), Enumerable.Empty<Point2D>())
+			: this(Enumerable.Empty<Obstacle>(), Enumerable.Empty<Point>())
 		{
 		}
 
-		public VisibilityGraph(IEnumerable<Obstacle> obstacles, IEnumerable<Point2D> singlePoints)
+		public VisibilityGraph(IEnumerable<Obstacle> obstacles, IEnumerable<Point> singlePoints)
 		{
 			_obstacles = new HashSet<Obstacle>(obstacles);
-			_singlePoints = new HashSet<Point2D>(singlePoints);
+			_singlePoints = new HashSet<Point>(singlePoints);
 			_nodes = new List<RotationTreeNode>();
 		}
 
@@ -31,7 +32,7 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			get { return _obstacles; }
 		}
 
-		public ISet<Point2D> SinglePoints
+		public ISet<Point> SinglePoints
 		{
 			get { return _singlePoints; }
 		}
@@ -43,35 +44,35 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			ComputeRotationTree();
 		}
 
-		public IUndirectedGraph<Point2D, Edge<Point2D>> Graph
+		public IUndirectedGraph<PointVertex, Edge<PointVertex>> Graph
 		{
 			get { return _graph; }
 		}
 
 		private void Initialize()
 		{
-			_graph = new UndirectedGraph<Point2D, Edge<Point2D>>();
+			_graph = new UndirectedGraph<PointVertex, Edge<PointVertex>>();
 			_nodes.Clear();
 			foreach (Obstacle obstacle in _obstacles)
 			{
 				foreach (RotationTreeNode node in obstacle.Nodes)
 				{
 					_nodes.Add(node);
-					_graph.AddVertex(node.Point);
+					_graph.AddVertex(new PointVertex(node.Point));
 				}
-				_graph.AddEdgeRange(obstacle.Segments.Select(s => new Edge<Point2D>(s.Point1.Point, s.Point2.Point)));
+				_graph.AddEdgeRange(obstacle.Segments.Select(s => new Edge<PointVertex>(new PointVertex(s.Point1.Point), new PointVertex(s.Point2.Point))));
 			}
-			foreach (Point2D point in _singlePoints)
+			foreach (Point point in _singlePoints)
 			{
 				Obstacle obstacle = _obstacles.FirstOrDefault(o => o.Contains(point));
 				var newPoint = new RotationTreeNode(obstacle, point, true);
-				_graph.AddVertex(point);
+				_graph.AddVertex(new PointVertex(point));
 				_nodes.Add(newPoint);
 			}
 
 			double maxX = _nodes.Max(p => p.Point.X);
-			_plusInf = new RotationTreeNode(new Point2D(maxX + 100, double.PositiveInfinity));
-			_minusInf = new RotationTreeNode(new Point2D(maxX + 100, double.NegativeInfinity));
+			_plusInf = new RotationTreeNode(new Point(maxX + 100, double.PositiveInfinity));
+			_minusInf = new RotationTreeNode(new Point(maxX + 100, double.NegativeInfinity));
 			_plusInf.AddChild(_minusInf);
             foreach (RotationTreeNode node in _nodes.OrderByDescending(n => n))
                 _minusInf.AddChild(node);
@@ -262,8 +263,10 @@ namespace GraphSharp.Algorithms.EdgeRouting
 
 		private void AddEdge(RotationTreeNode p, RotationTreeNode q)
 		{
-			if (_graph.ContainsVertex(p.Point) && _graph.ContainsVertex(q.Point))
-				_graph.AddEdge(new Edge<Point2D>(p.Point, q.Point));
+            var pVertex = new PointVertex(p.Point);
+		    var qVertex = new PointVertex(q.Point);
+			if (_graph.ContainsVertex(pVertex) && _graph.ContainsVertex(qVertex))
+				_graph.AddEdge(new Edge<PointVertex>(pVertex, qVertex));
 		}
 
 		private bool SameObstacle(RotationTreeNode p, RotationTreeNode q)
@@ -451,13 +454,13 @@ namespace GraphSharp.Algorithms.EdgeRouting
 
 			double y = m1 * x + b1;
 
-			var crossingPoint = new Point2D(x, y);
+			var crossingPoint = new Point(x, y);
 
 			// check if distancePQ is the smallest
 			return CalcDistance(p.Point, q.Point) <= CalcDistance(p.Point, crossingPoint);
 		}
 
-		private static double CalcDistance(Point2D p1, Point2D p2)
+		private static double CalcDistance(Point p1, Point p2)
 		{
 			if (Math.Abs(p1.X - p2.X) < double.Epsilon)
 				return Math.Abs(p1.Y - p2.Y);
@@ -467,7 +470,7 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
 		}
 
-		private static double CalcDistance(Point2D p, Point2D v, Point2D w)
+		private static double CalcDistance(Point p, Point v, Point w)
 		{
 			double l2 = Math.Pow(v.X - w.X, 2) + Math.Pow(v.Y - w.Y, 2);
 			if (Math.Abs(l2) < double.Epsilon)
@@ -477,7 +480,7 @@ namespace GraphSharp.Algorithms.EdgeRouting
 				return CalcDistance(p, v);
 			if (t > 1)
 				return CalcDistance(p, w);
-			var proj = new Point2D(v.X + t * (w.X - v.X), v.Y + t * (w.Y - v.Y));
+			var proj = new Point(v.X + t * (w.X - v.X), v.Y + t * (w.Y - v.Y));
 			return CalcDistance(p, proj);
 		}
 	}

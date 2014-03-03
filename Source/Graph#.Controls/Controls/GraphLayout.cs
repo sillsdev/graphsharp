@@ -400,7 +400,13 @@ namespace GraphSharp.Controls
                 }
             }
             if (update)
+            {
+                // update the layout here so that edge routing and overlap removal can get the updated vertex sizes,
+                // if a vertex is angled, the new size isn't the actual vertex size, but rather the size of the
+                // bounding rectangle around the angled vertex.
+                // TODO: change edge routing and overlap removal to use the actual vertex rectangle and not the bounding rectangle
                 UpdateLayout();
+            }
         }
 
         private IDictionary<TVertex, Size> GetLatestVertexSizes()

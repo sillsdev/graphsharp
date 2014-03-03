@@ -40,35 +40,35 @@ namespace GraphSharp.Algorithms.EdgeRouting
 				Size sz = _vertexSizes[vertex];
 				var rect = new Rect(new Point(pos.X - (sz.Width / 2), pos.Y - (sz.Height / 2)), sz);
 				rect.Inflate(_parameters.VertexMargin, _parameters.VertexMargin);
-				visibilityGraph.Obstacles.Add(new Obstacle(Convert(rect.TopLeft), Convert(rect.TopRight), Convert(rect.BottomRight), Convert(rect.BottomLeft)));
+				visibilityGraph.Obstacles.Add(new Obstacle(rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft));
 			}
 
 			foreach (TEdge edge in VisitedGraph.Edges)
 			{
-				visibilityGraph.SinglePoints.Add(Convert(_vertexPositions[edge.Source]));
-				visibilityGraph.SinglePoints.Add(Convert(_vertexPositions[edge.Target]));
+				visibilityGraph.SinglePoints.Add(_vertexPositions[edge.Source]);
+				visibilityGraph.SinglePoints.Add(_vertexPositions[edge.Target]);
 			}
 
-			var vertexPoints = new HashSet<Point2D>(_vertexPositions.Select(kvp => Convert((Point) kvp.Value)));
+			var vertexPoints = new HashSet<PointVertex>(_vertexPositions.Select(kvp => new PointVertex(kvp.Value)));
 			
 			visibilityGraph.Compute();
-			IUndirectedGraph<Point2D, Edge<Point2D>> graph = visibilityGraph.Graph;
-			var usedEdges = new HashSet<Edge<Point2D>>();
+			IUndirectedGraph<PointVertex, Edge<PointVertex>> graph = visibilityGraph.Graph;
+			var usedEdges = new HashSet<Edge<PointVertex>>();
 			foreach (TEdge edge in VisitedGraph.Edges)
 			{
-				Point2D pos1 = Convert(_vertexPositions[edge.Source]);
-				Point2D pos2 = Convert(_vertexPositions[edge.Target]);
-				TryFunc<Point2D, IEnumerable<Edge<Point2D>>> paths = graph.ShortestPathsDijkstra(e => GetWeight(vertexPoints, usedEdges, pos1, pos2, e), pos1);
-				IEnumerable<Edge<Point2D>> path;
+				var pos1 = new PointVertex(_vertexPositions[edge.Source]);
+				var pos2 = new PointVertex(_vertexPositions[edge.Target]);
+				TryFunc<PointVertex, IEnumerable<Edge<PointVertex>>> paths = graph.ShortestPathsDijkstra(e => GetWeight(vertexPoints, usedEdges, pos1, pos2, e), pos1);
+				IEnumerable<Edge<PointVertex>> path;
 				if (paths(pos2, out path))
 				{
 					var edgeRoute = new List<Point>();
 					bool first = true;
-					Point2D point = pos1;
-					foreach (Edge<Point2D> e in path)
+					PointVertex point = pos1;
+					foreach (Edge<PointVertex> e in path)
 					{
 						if (!first)
-							edgeRoute.Add(Convert(point));
+							edgeRoute.Add(point.Point);
 						usedEdges.Add(e);
 						point = e.GetOtherVertex(point);
 						first = false;
@@ -78,7 +78,7 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			}
 		}
 
-		protected virtual double GetWeight(HashSet<Point2D> vertexPoints, HashSet<Edge<Point2D>> usedEdges, Point2D pos1, Point2D pos2, Edge<Point2D> edge)
+		protected virtual double GetWeight(HashSet<PointVertex> vertexPoints, HashSet<Edge<PointVertex>> usedEdges, PointVertex pos1, PointVertex pos2, Edge<PointVertex> edge)
 		{
 			if (vertexPoints.Contains(edge.Source) && (!edge.Source.Equals(pos1) && !edge.Source.Equals(pos2)))
 				return double.PositiveInfinity;
@@ -86,19 +86,9 @@ namespace GraphSharp.Algorithms.EdgeRouting
 			if (vertexPoints.Contains(edge.Target) && (!edge.Target.Equals(pos1) && !edge.Target.Equals(pos2)))
 				return double.PositiveInfinity;
 
-			double length = Math.Sqrt(Math.Pow(edge.Source.X - edge.Target.X, 2) + Math.Pow(edge.Source.Y - edge.Target.Y, 2));
+			double length = Math.Sqrt(Math.Pow(edge.Source.Point.X - edge.Target.Point.X, 2) + Math.Pow(edge.Source.Point.Y - edge.Target.Point.Y, 2));
 			double ink = usedEdges.Contains(edge) ? 0 : length;
 			return (_parameters.InkCoefficient * ink) + (_parameters.LengthCoefficient * length);
-		}
-
-		private static Point2D Convert(Point p)
-		{
-			return new Point2D(p.X, p.Y);
-		}
-
-		private static Point Convert(Point2D p)
-		{
-			return new Point(p.X, p.Y);
 		}
 	}
 }

@@ -134,7 +134,7 @@
     <Compile Include="Algorithms\EdgeRouting\BundleEdgeRoutingParameters.cs" />
     <Compile Include="Algorithms\EdgeRouting\Obstacle.cs" />
     <Compile Include="Algorithms\EdgeRouting\ObstacleSegment.cs" />
-    <Compile Include="Algorithms\EdgeRouting\Point2D.cs" />
+    <Compile Include="Algorithms\EdgeRouting\PointVertex.cs" />
     <Compile Include="Algorithms\EdgeRouting\RotationTreeNode.cs" />
     <Compile Include="Algorithms\EdgeRouting\VisibilityGraph.cs" />
     <Compile Include="Algorithms\Highlight\HierarchicalHighlightAlgorithm.cs" />
