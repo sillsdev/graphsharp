@@ -111,7 +111,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MathNet.Numerics">
-      <HintPath>..\..\..\..\packages\MathNet.Numerics.2.6.2\lib\net40\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\packages\MathNet.Numerics.2.6.2\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
