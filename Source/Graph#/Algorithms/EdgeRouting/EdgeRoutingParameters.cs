@@ -9,8 +9,9 @@
 
 		protected void NotifyChanged( string propertyName )
 		{
-			if ( PropertyChanged != null )
-				PropertyChanged( this, new System.ComponentModel.PropertyChangedEventArgs( propertyName ) );
+			var handler = PropertyChanged;
+			if (handler != null)
+				handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 		}
 
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;

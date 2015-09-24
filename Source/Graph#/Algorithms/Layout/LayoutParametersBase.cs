@@ -20,8 +20,9 @@ namespace GraphSharp.Algorithms.Layout
 		protected void NotifyPropertyChanged(string propertyName)
 		{
 			//delegating to the event...
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChangedEventHandler handler = PropertyChanged;
+			if (handler != null)
+				handler(this, new PropertyChangedEventArgs(propertyName));
 		}
 		#endregion
 	}

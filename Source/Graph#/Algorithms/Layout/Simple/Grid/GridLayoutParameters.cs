@@ -106,10 +106,11 @@ namespace GraphSharp.Algorithms.Layout.Simple.Grid
 
         internal GridVertexInfo GetVertexInfo(object vertex)
         {
-            if (VertexInfo != null)
+            EventHandler<GridVertexInfoEventArgs> handler = VertexInfo;
+            if (handler != null)
             {
                 var e = new GridVertexInfoEventArgs(vertex);
-                VertexInfo(this, e);
+                handler(this, e);
                 return e.VertexInfo;
             }
             return null;

@@ -487,8 +487,9 @@ namespace GraphSharp.Controls
 
             LayoutStatusPercent = 100;
 
-            if (LayoutFinished != null)
-                LayoutFinished(this, new EventArgs());
+            EventHandler handler = LayoutFinished;
+            if (handler != null)
+                handler(this, new EventArgs());
         }
 
         private void SetLayoutInformations(ILayoutInfoIterationEventArgs<TVertex, TEdge> iterArgs)

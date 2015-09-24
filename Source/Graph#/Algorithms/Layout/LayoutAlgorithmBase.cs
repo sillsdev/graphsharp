@@ -103,9 +103,10 @@ namespace GraphSharp.Algorithms.Layout
 
         protected virtual void OnIterationEnded(ILayoutIterationEventArgs<TVertex> args)
         {
-            if ( IterationEnded != null )
+            LayoutIterationEndedEventHandler<TVertex> handler = IterationEnded;
+            if (handler != null)
             {
-                IterationEnded( this, args );
+                handler(this, args);
 
                 //if the layout should be aborted
                 if ( args.Abort )
@@ -115,8 +116,9 @@ namespace GraphSharp.Algorithms.Layout
 
         protected virtual void OnProgressChanged( double percent )
         {
-            if ( ProgressChanged != null )
-                ProgressChanged( this, percent );
+            ProgressChangedEventHandler handler = ProgressChanged;
+            if (handler != null)
+                handler(this, percent);
         }
 
         public virtual object GetVertexInfo( TVertex vertex )
