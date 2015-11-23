@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual Studio 2013
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphSharp", "Graph#\GraphSharp.csproj", "{9C59C516-FCA0-4FCF-AE11-E20F0F1B1949}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphSharp.Controls", "Graph#.Controls\GraphSharp.Controls.csproj", "{90D874F2-486E-477E-93A9-FFA6FC92A2F4}"

@@ -13,4 +13,7 @@
     <copyright>Copyright 2015</copyright>
     <tags>WPF QuickGraph Graph# edge routing graph layout</tags>
   </metadata>
+  <files>
+    <file src="bin\$configuration$\GraphSharp*.pdb" target="lib\net40-Client" />
+  </files>
 </package>
