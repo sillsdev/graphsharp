@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>GraphSharp-SIL</id>
+    <id>GraphSharp.SIL</id>
     <version>$version$</version>
     <title>GraphSharp (SIL)</title>
     <authors>palesz, SIL</authors>
