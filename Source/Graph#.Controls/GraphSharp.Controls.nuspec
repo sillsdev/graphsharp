@@ -1,27 +1,16 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>GraphSharp</id>
+    <id>GraphSharp-SIL</id>
     <version>$version$</version>
-    <title>GraphSharp</title>
-    <authors>palesz</authors>
-    <owners>DavidSchmitt</owners>
+    <title>GraphSharp (SIL)</title>
+    <authors>palesz, SIL</authors>
+    <owners>SIL</owners>
     <licenseUrl>http://graphsharp.codeplex.com/license</licenseUrl>
-    <projectUrl>http://graphsharp.codeplex.com/</projectUrl>
+    <projectUrl>https://github.com/sillsdev/graphsharp</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Graph# is a graph layout framework. It contains some layout algorithms and a GraphLayout control for WPF applications. This is a unofficial release of the library.</description>
-    <releaseNotes>
-      WE ARE NOT THE MAINTAINER OF GRAPH SHARP!
-      Updated to .NET 4.0.
-    </releaseNotes>
-    <copyright>Copyright 2012</copyright>
-    <tags>WPF QuickGraph</tags>
-    <dependencies>
-      <dependency id="QuickGraph" version="3.6.61119.7" />
-      <dependency id="WPFExtensions"  />
-    </dependencies>
+    <description>Graph# (SIL) is a graph layout framework. It contains some layout algorithms and a GraphLayout control for WPF applications. This is a fork of the Graph# library.</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>WPF QuickGraph Graph# edge routing graph layout</tags>
   </metadata>
-  <files>
-    <file src="..\Graph#\bin\Release\GraphSharp.dll" target="lib\net40" />
-  </files>
 </package>
