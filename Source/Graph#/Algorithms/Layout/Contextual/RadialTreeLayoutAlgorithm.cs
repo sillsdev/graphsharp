@@ -31,8 +31,11 @@ namespace GraphSharp.Algorithms.Layout.Contextual
             CountLeaves(null, _root);
 
             double denom = 2 * Math.Tan(Math.PI / _leafCounts[_root]);
-            double minLen = VisitedGraph.Edges.Where(e => !(e is ILengthEdge<TVertex>) || ((ILengthEdge<TVertex>) e).Length > 0).Min(e => e is ILengthEdge<TVertex> ? ((ILengthEdge<TVertex>) e).Length : 1);
-            double minSlope = Parameters.MinimumLength / minLen;
+            TEdge[] edges = VisitedGraph.Edges.Where(e => !(e is ILengthEdge<TVertex>) || ((ILengthEdge<TVertex>) e).Length > 0).ToArray();
+            double minLen = 0;
+            if (edges.Length > 0)
+                minLen = edges.Min(e => e is ILengthEdge<TVertex> ? ((ILengthEdge<TVertex>) e).Length : 1);
+            double minSlope = minLen == 0 ? 0 : Parameters.MinimumLength / minLen;
             switch (Parameters.BranchLengthScaling)
             {
                 case BranchLengthScaling.MinimizeLabelOverlapAverage:

@@ -3,6 +3,7 @@ obj
 *.nupkg
 *.suo
 *.csproj.user
+.vs/
 
 # Only commit repositories.config. The rest of /packages is only a local cache
 !/Source/packages/repositories.config
