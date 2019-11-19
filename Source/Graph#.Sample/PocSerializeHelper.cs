@@ -1,5 +1,6 @@
-﻿using QuickGraph.Serialization;
-using System.Xml;
+﻿using System;
+// using QuickGraph.Serialization;
+// using System.Xml;
 
 namespace GraphSharp.Sample
 {
@@ -7,33 +8,35 @@ namespace GraphSharp.Sample
 	{
 		public static PocGraph LoadGraph( string filename )
 		{
-			//open the file of the graph
-			var reader = XmlReader.Create( filename );
+			////open the file of the graph
+			//var reader = XmlReader.Create( filename );
 
-			//create the serializer
-			var serializer = new GraphMLDeserializer<PocVertex, PocEdge, PocGraph>();
+			////create the serializer
+			//var serializer = new GraphMLDeserializer<PocVertex, PocEdge, PocGraph>();
 
-			//graph where the vertices and edges should be put in
-			var pocGraph = new PocGraph();
+			////graph where the vertices and edges should be put in
+			//var pocGraph = new PocGraph();
 
-			//deserialize the graph
-			serializer.Deserialize( reader, pocGraph,
-			                        id => new PocVertex( id ),
-			                        ( source, target, id ) => new PocEdge( id, source, target ) );
+			////deserialize the graph
+			//serializer.Deserialize( reader, pocGraph,
+			//                        id => new PocVertex( id ),
+			//                        ( source, target, id ) => new PocEdge( id, source, target ) );
 
-			return pocGraph;
+			//return pocGraph;
+			throw new NotImplementedException();
 		}
 
 		public static void SaveGraph( PocGraph graph, string filename )
 		{
-			//create the xml writer
-			using ( var writer = XmlWriter.Create( filename ) )
-			{
-				var serializer = new GraphMLSerializer<PocVertex, PocEdge, PocGraph>();
+			////create the xml writer
+			//using ( var writer = XmlWriter.Create( filename ) )
+			//{
+			//	var serializer = new GraphMLSerializer<PocVertex, PocEdge, PocGraph>();
 
-				//serialize the graph
-				serializer.Serialize( writer, graph, v => v.ID, e => e.ID );
-			}
+			//	//serialize the graph
+			//	serializer.Serialize( writer, graph, v => v.ID, e => e.ID );
+			//}
+			throw new NotImplementedException();
 		}
 	}
 }
