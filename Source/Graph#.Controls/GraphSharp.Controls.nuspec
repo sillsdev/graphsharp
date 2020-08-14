@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/sillsdev/graphsharp</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Graph# (SIL) is a graph layout framework. It contains some layout algorithms and a GraphLayout control for WPF applications. This is a fork of the Graph# library.</description>
-    <copyright>Copyright 2019</copyright>
+    <copyright>Copyright 2020</copyright>
     <tags>WPF QuickGraph Graph# edge routing graph layout</tags>
   </metadata>
   <files>
