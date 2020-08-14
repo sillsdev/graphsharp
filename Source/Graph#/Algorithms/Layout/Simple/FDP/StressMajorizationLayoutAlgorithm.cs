@@ -73,7 +73,7 @@ namespace GraphSharp.Algorithms.Layout.Simple.FDP
             d = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
             w = new double[VisitedGraph.VertexCount, VisitedGraph.VertexCount];
 
-            double maxCost = 0;
+            double maxCost = 0.0001;
             var undirected = new UndirectedBidirectionalGraph<TVertex, TEdge>(VisitedGraph);
             int i = 0;
             foreach (TVertex source in undirected.Vertices)
